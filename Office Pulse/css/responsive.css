@@ -1,0 +1,59 @@
+/* Mobile Responsive Tweaks */
+@media (max-width: 768px) {
+
+    /* Layout */
+    .app-container {
+        flex-direction: column;
+        padding: 10px;
+    }
+
+    .sidebar {
+        width: 100%;
+        margin-bottom: 20px;
+    }
+
+    /* Modal */
+    .modal-content {
+        width: 95% !important;
+        margin: 10vh auto !important;
+        padding: 20px !important;
+        max-height: 85vh;
+        overflow-y: auto;
+    }
+
+    /* Status Buttons */
+    .status-buttons {
+        grid-template-columns: repeat(3, 1fr) !important;
+    }
+
+    /* Adjust Status Buttons Text */
+    .status-btn span {
+        font-size: 0.9rem;
+    }
+
+    /* Form Grids in Settings */
+    #edit-team-form .form-group {
+        grid-template-columns: 1fr !important;
+        /* Stack inputs */
+    }
+
+    /* Location Settings Grid */
+    #edit-team-form div[style*="grid-template-columns: 120px 1fr auto"] {
+        grid-template-columns: 1fr auto !important;
+    }
+
+    #edit-team-form input[id*="label"] {
+        grid-column: span 2;
+        margin-bottom: 5px;
+    }
+
+    /* Hide decorative blobs on mobile to save performance/space */
+    .app-background {
+        display: none;
+    }
+
+    body {
+        background: var(--bg-color);
+        /* Fallback solid */
+    }
+}

@@ -1,0 +1,19 @@
+/* ... CSS unchanged, adding active style for batch btn ... */
+#batch-mode-btn.active {
+    background-color: var(--text-primary);
+    color: white;
+    border-color: var(--text-primary);
+}
+
+/* Multi-selected day style - darker border/bg */
+.calendar-day.multi-selected {
+    border: 2px solid var(--text-primary);
+    background: #e2e8f0;
+    transform: scale(0.98);
+}
+
+/* Ensure previous selection still distinct or merged? 
+   Let's make sure 'selected' (focus) is subtle, multi-selected is strong */
+.calendar-day.selected {
+    border-color: var(--date-color);
+}

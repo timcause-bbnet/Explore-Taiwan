@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>房間設施使用說明</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&display=swap');
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Microsoft JhengHei', '微軟正黑體', 'Noto Sans TC', sans-serif;
+            background-image: url('mountain_background.png');
+            /* Ensure this matches the generated image artifact name if saved locally, or use a placeholder if not accessible directly */
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .card {
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 40px 60px;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            max-width: 800px;
+            width: 90%;
+            margin: 20px;
+            color: #333;
+        }
+
+        h1 {
+            text-align: center;
+            color: #5d4037;
+            /* Brownish tone similar to original */
+            font-size: 36px;
+            margin-bottom: 30px;
+            font-weight: bold;
+            letter-spacing: 2px;
+        }
+
+        .item {
+            margin-bottom: 25px;
+        }
+
+        .item-title {
+            font-size: 22px;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 8px;
+        }
+
+        .item-title span {
+            color: #555;
+            margin-right: 10px;
+        }
+
+        .item-content {
+            font-size: 18px;
+            line-height: 1.6;
+            color: #444;
+            padding-left: 2em;
+        }
+
+        .highlight-red {
+            color: #c0392b;
+            font-weight: bold;
+        }
+
+        .highlight-yellow {
+            color: #d35400;
+            /* Darker orange/yellow for readability */
+            font-weight: bold;
+        }
+
+        .footer {
+            margin-top: 40px;
+            text-align: right;
+            border-top: 2px solid #eee;
+            padding-top: 20px;
+        }
+
+        .hotel-name {
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        .logo-placeholder {
+            width: 40px;
+            height: 40px;
+            background-color: #8B0000;
+            /* Dark red/brown logo color */
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-weight: bold;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="card">
+        <h1>房間設施使用說明</h1>
+
+        <div class="item">
+            <div class="item-title">一、 電暖器</div>
+            <div class="item-content">
+                靠近窗戶桌面上<span class="highlight-red">【按鈕】</span>按下：<span class="highlight-yellow">黃色一開</span>，<span
+                    class="highlight-red">紅色一開</span>，電暖器為2小時自動保暖除溼循環，2小時到會自動停止。<br>
+                如需使用再按一次即可。
+            </div>
+        </div>
+
+        <div class="item">
+            <div class="item-title">二、 電毯</div>
+            <div class="item-content">
+                全館床鋪均已鋪上電毯，開關在枕頭下方。<br>
+                先將開關撥轉到數字「5」預熱，<br>
+                20分鐘後再將數字撥轉到「1」「2」或適合自己熱度即可。
+            </div>
+        </div>
+
+        <div class="item">
+            <div class="item-title">三、 免費無線上網(全館)</div>
+            <div class="item-content">
+                密碼：1122334455，連結入住樓層即可<br>
+                (例如:入住2樓，則可選擇2F-1或2F-2)
+            </div>
+        </div>
+
+        <div class="item">
+            <div class="item-title">四、 熱水(24小時供應)</div>
+            <div class="item-content">
+                因山上氣候冷，山泉水管路較長，預熱時間較久，<br>
+                使用前先將熱水開至最大，稍微耐心等候<br>
+                (5~10分鐘左右)，即會流出熱呼呼的山泉水喔！
+            </div>
+        </div>
+
+        <div class="item">
+            <div class="item-title">五、 總機</div>
+            <div class="item-content">
+                總機撥 9<br>
+                房間對房間直接按號互換即可
+            </div>
+        </div>
+
+        <div class="footer">
+            <div class="hotel-name">
+                <div class="logo-placeholder">高峰</div>
+                <div>
+                    高峰大飯店<br>
+                    <span style="font-size: 18px; font-weight: normal;">登山別館</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+
+</html>
