@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alishan Vibe | 阿里山旅宿精選</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&family=Playfair+Display:ital,wght@1,400;1,700&display=swap"
+        rel="stylesheet">
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="logo">Alishan Vibe.</div>
+        <div class="nav-links">
+            <a href="#featured">精選旅宿</a>
+            <a href="#about">關於我們</a>
+            <a href="admin.html" class="btn-outline">業者登入</a>
+        </div>
+    </nav>
+
+    <!-- Hero Carousel -->
+    <header class="hero-carousel" id="heroCarousel">
+        <div class="hero-track" id="heroTrack">
+            <!-- JS will inject images here -->
+        </div>
+        <div class="hero-content">
+            <h1>在雲端，遇見最美的款待</h1>
+            <p>精選阿里山頂級民宿、飯店與露營體驗</p>
+        </div>
+
+        <div class="scroll-down">
+            <i class="fas fa-chevron-down"></i>
+        </div>
+    </header>
+
+    <!-- Sticky Theme Navigation -->
+    <nav class="theme-nav" id="themeNav">
+        <div class="container theme-nav-inner">
+            <a href="#listings" class="nav-item active"><i class="fas fa-search"></i> 開始探索</a>
+            <a href="#attractions" class="nav-item"><i class="fas fa-mountain"></i> 特色景點</a>
+            <a href="#delicacies" class="nav-item"><i class="fas fa-utensils"></i> 美食名產</a>
+            <a href="#transport" class="nav-item"><i class="fas fa-bus"></i> 交通資訊</a>
+        </div>
+    </nav>
+
+    <!-- Filter Section (Listings) -->
+    <section class="filters" id="listings">
+        <button class="filter-btn active" data-filter="all">全部</button>
+        <button class="filter-btn" data-filter="民宿">民宿</button>
+        <button class="filter-btn" data-filter="飯店">飯店</button>
+        <button class="filter-btn" data-filter="露營">露營</button>
+    </section>
+
+    <!-- Operators Grid -->
+    <main class="container">
+        <div class="operators-grid" id="operators-grid">
+            <div class="loading">
+                <i class="fas fa-spinner fa-spin"></i> 載入中...
+            </div>
+        </div>
+    </main>
+
+    <!-- Attractions Section -->
+    <section class="info-section bg-white" id="attractions">
+        <div class="container">
+            <h2 class="section-title">特色景點</h2>
+            <div class="operators-grid" id="attractions-grid">
+                <!-- JS content -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Delicacies Section -->
+    <section class="info-section bg-light" id="delicacies">
+        <div class="container">
+            <h2 class="section-title">美食名產</h2>
+            <div class="operators-grid" id="delicacies-grid">
+                <!-- JS content -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Transport Section -->
+    <section class="transport-section" id="transport">
+        <div class="container">
+            <h2 class="section-title">交通資訊</h2>
+            <div class="transport-grid">
+                <div class="transport-card">
+                    <i class="fas fa-train"></i>
+                    <h3>阿里山林業鐵路</h3>
+                    <p>嘉義站至阿里山站每日兩班次 (09:00, 10:00)。全線通車後可直達阿里山，感受百年鐵道的魅力。</p>
+                    <small>全票 $600 | 需提前 14 天訂票</small>
+                    <a href="https://afrch.forest.gov.tw/0000059" target="_blank" class="btn-transport">訂購資訊 <i
+                            class="fas fa-external-link-alt"></i></a>
+                </div>
+                <div class="transport-card">
+                    <i class="fas fa-bus"></i>
+                    <h3>台灣好行公車</h3>
+                    <p>搭乘【7329】線從嘉義高鐵站，或【7322】線從嘉義火車站出發。班次密集，部分班次行經奮起湖。</p>
+                    <small>路程約 2.5 小時 | 可使用電子票證</small>
+                    <a href="https://www.taiwantrip.com.tw/Frontend/Route/Select_p?RouteID=R0006" target="_blank"
+                        class="btn-transport">訂購資訊 <i class="fas fa-external-link-alt"></i></a>
+                </div>
+                <div class="transport-card">
+                    <i class="fas fa-car-side"></i>
+                    <h3>自行開車</h3>
+                    <p>國道3號中埔交流道下，接台18線(阿里山公路)。沿途風景優美，但午後易起霧請小心駕駛。</p>
+                    <small>園區停車位有限，建議提早抵達</small>
+                    <a href="https://www.google.com/maps/dir/?api=1&destination=阿里山國家森林遊樂區" target="_blank"
+                        class="btn-transport">立即導航 <i class="fas fa-location-arrow"></i></a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2025 Alishan Vibe. All Rights Reserved.</p>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="js/app.js"></script>
+</body>
+
+</html>

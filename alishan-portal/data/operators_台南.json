@@ -1,0 +1,41 @@
+[
+  {
+    "id": "1766994273907",
+    "name": "九號文旅",
+    "category": "飯店",
+    "location": "台南",
+    "address": "臺南市永康區永中街107號",
+    "tel": "",
+    "link": "",
+    "description": "",
+    "tags": [],
+    "images": [],
+    "image": ""
+  },
+  {
+    "id": "1766994273908",
+    "name": "九號光舟",
+    "category": "民宿",
+    "location": "台南",
+    "address": "臺南市安平區州平二街51號",
+    "tel": "",
+    "link": "",
+    "description": "",
+    "tags": [],
+    "images": [],
+    "image": ""
+  },
+  {
+    "id": "1766994273909",
+    "name": "九號和和",
+    "category": "民宿",
+    "location": "台南",
+    "address": "臺南市安平區州平二街53號",
+    "tel": "",
+    "link": "",
+    "description": "",
+    "tags": [],
+    "images": [],
+    "image": ""
+  }
+]

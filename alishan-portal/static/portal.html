@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Taiwan Travel | 台灣深度之旅</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;500;700&family=Playfair+Display:wght@600&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #2c7a7b;
+            /* Teal/Ocean */
+            --accent: #ed8936;
+            /* Orange/Sun */
+            --bg-light: #f7fafc;
+            --text-dark: #2d3748;
+            --white: #ffffff;
+            --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background-color: var(--bg-light);
+            color: var(--text-dark);
+            line-height: 1.6;
+            scroll-behavior: smooth;
+        }
+
+        /* Hero / Search Section */
+        header {
+            background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url('https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?ixlib=rb-1.2.1&auto=format&fit=crop&w=1920&q=80');
+            background-size: cover;
+            background-position: center;
+            height: 500px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            color: white;
+            padding: 20px;
+            transition: background-image 1s ease-in-out;
+        }
+
+        header h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 3.5rem;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        header p {
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            letter-spacing: 2px;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Search Bar Container */
+        .search-container {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 20px 30px;
+            border-radius: 50px;
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            flex-wrap: wrap;
+            max-width: 900px;
+            width: 100%;
+        }
+
+        .input-group {
+            display: flex;
+            align-items: center;
+            flex: 1;
+            border: 1px solid #e2e8f0;
+            border-radius: 30px;
+            padding: 5px 15px;
+            background: white;
+        }
+
+        .input-group i {
+            color: var(--primary);
+            margin-right: 10px;
+        }
+
+        .input-group input {
+            border: none;
+            outline: none;
+            width: 100%;
+            padding: 10px 0;
+            font-size: 1rem;
+            color: var(--text-dark);
+        }
+
+        .search-btn {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 40px;
+            border-radius: 30px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.3s;
+            box-shadow: 0 4px 6px rgba(44, 122, 123, 0.3);
+        }
+
+        .search-btn:hover {
+            background-color: #234e52;
+            transform: translateY(-2px);
+        }
+
+        /* Main Content */
+        .regions-container {
+            max-width: 1200px;
+            margin: 50px auto;
+            padding: 0 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 40px;
+        }
+
+        .region-section {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: var(--card-shadow);
+            display: flex;
+            transition: 0.3s;
+            border: 1px solid #edf2f7;
+            height: 350px;
+            /* Fixed height for consistent layout */
+        }
+
+        .region-section:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        /* CAROUSEL STYLES */
+        .region-image-container {
+            flex: 1;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .carousel-slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            opacity: 0;
+            transform: scale(1.05);
+            /* Slight zoom start */
+            transition: opacity 1.5s ease-in-out, transform 8s linear;
+        }
+
+        .carousel-slide.active {
+            opacity: 1;
+            transform: scale(1);
+            /* Zoom in effect */
+        }
+
+        .region-label {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            color: white;
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            font-weight: 700;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.6);
+            z-index: 10;
+        }
+
+        .region-content {
+            flex: 2;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .region-header {
+            font-size: 1.5rem;
+            color: var(--primary);
+            margin-bottom: 20px;
+            border-bottom: 2px solid rgba(0, 0, 0, 0.05);
+            padding-bottom: 10px;
+        }
+
+        .locations-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .location-tag {
+            display: inline-block;
+            padding: 8px 16px;
+            border-radius: 20px;
+            background-color: white;
+            border: 1px solid #e2e8f0;
+            color: #4a5568;
+            text-decoration: none;
+            font-size: 0.95rem;
+            transition: 0.2s;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+            position: relative;
+        }
+
+        .location-tag:hover {
+            background-color: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .location-tag.scenic {
+            background-color: #fffbeb;
+            /* Very light yellow */
+            color: #b7791f;
+            border-color: #fbd38d;
+        }
+
+        .location-tag.scenic:hover {
+            background-color: var(--accent);
+            color: white;
+            border-color: var(--accent);
+        }
+
+        /* Highlight Animation */
+        @keyframes highlightPulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(237, 137, 54, 0.7);
+            }
+
+            70% {
+                box-shadow: 0 0 0 10px rgba(237, 137, 54, 0);
+            }
+
+            100% {
+                box-shadow: 0 0 0 0 rgba(237, 137, 54, 0);
+            }
+        }
+
+        .highlight {
+            animation: highlightPulse 1.5s infinite;
+            border: 2px solid var(--accent);
+            z-index: 10;
+        }
+
+        /* Hotel Results Modal/Section */
+        #hotel-result-section {
+            display: none;
+            max-width: 1200px;
+            margin: 0 auto 50px auto;
+            padding: 30px;
+            background: #fffafa;
+            border-radius: 20px;
+            border: 2px solid var(--accent);
+            box-shadow: 0 10px 25px rgba(237, 137, 54, 0.15);
+        }
+
+        .result-header {
+            font-size: 1.5rem;
+            color: var(--text-dark);
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .hotel-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .hotel-card {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: var(--card-shadow);
+            transition: 0.3s;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .hotel-card:hover {
+            transform: translateY(-3px);
+        }
+
+        .hotel-img {
+            height: 180px;
+            background-color: #ddd;
+            background-size: cover;
+            background-position: center;
+        }
+
+        .hotel-info {
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+        }
+
+        .hotel-name {
+            font-weight: 700;
+            margin-bottom: 5px;
+            color: var(--primary);
+            font-size: 1.1rem;
+        }
+
+        .hotel-tags {
+            margin-bottom: 10px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+        }
+
+        .hotel-tag {
+            font-size: 0.75rem;
+            background: #edf2f7;
+            padding: 2px 8px;
+            border-radius: 10px;
+            color: #666;
+        }
+
+        .hotel-contact {
+            margin-top: auto;
+            padding-top: 10px;
+            border-top: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .hotel-tel {
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .book-btn {
+            display: inline-block;
+            padding: 8px 15px;
+            background: var(--primary);
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 0.9rem;
+            transition: 0.2s;
+        }
+
+        .book-btn:hover {
+            background: #234e52;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header id="mainHeader">
+        <h1 id="heroTitle">Explore Taiwan</h1>
+        <p id="heroSubtitle">探索台灣之美，從舒適開始</p>
+
+        <!-- Search Bar -->
+        <div class="search-container">
+            <div class="input-group">
+                <i class="fas fa-map-marker-alt"></i>
+                <input type="text" id="searchInput" placeholder="去哪裡? (例如: 阿里山)">
+            </div>
+            <div class="input-group">
+                <i class="fas fa-calendar-alt"></i>
+                <input type="date" id="dateInput">
+            </div>
+            <button class="search-btn" onclick="performSearch()">搜尋旅宿</button>
+        </div>
+    </header>
+
+    <!-- Dynamic Hotel Results (Hidden by default) -->
+    <div id="hotel-result-section">
+        <div class="result-header">
+            <span><i class="fas fa-check-circle" style="color:var(--accent)"></i> <span
+                    id="search-keyword-display">目的地</span> 推薦旅宿</span>
+            <button onclick="document.getElementById('hotel-result-section').style.display='none'"
+                style="border:none;background:none;cursor:pointer;font-size:1.2rem;">&times;</button>
+        </div>
+        <div class="hotel-cards" id="resultsGrid">
+        </div>
+    </div>
+
+    <!-- Region Sections Container -->
+    <div class="regions-container" id="regionsContainer">
+        <!-- JS will render this -->
+        <div style="text-align:center; padding: 50px; color:#aaa;">
+            <i class="fas fa-spinner fa-spin fa-2x"></i><br>Loading Regions...
+        </div>
+    </div>
+
+    <footer style="text-align:center; padding: 20px; color: #888;">
+        &copy; 2025 Taiwan Vibe Portal. All Rights Reserved.
+    </footer>
+
+    <script>
+        // Global Config
+        let portalConfig = null;
+
+        // Search Relationships Mapping (Fallback/Defaults)
+        const DEFAULT_RELATED_MAP = {
+            '嘉義': ['阿里山'],
+            '南投': ['清境農場', '日月潭'],
+            '屏東': ['小琉球', '墾丁'],
+            '台東': ['綠島', '蘭嶼']
+        };
+
+        // Colors
+        const REGION_COLORS = {
+            'north': '#ebf8ff', 'central': '#f0fff4', 'south': '#fffaf0', 'east': '#faf5ff', 'islands': '#e6fffa'
+        };
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', loadRegions);
+
+        async function loadRegions() {
+            try {
+                const res = await fetch('/api/data/portal_config.json');
+                portalConfig = await res.json();
+
+                // 1. Apply Hero Settings
+                if (portalConfig.hero) {
+                    if (portalConfig.hero.title) document.getElementById('heroTitle').innerText = portalConfig.hero.title;
+                    if (portalConfig.hero.subtitle) document.getElementById('heroSubtitle').innerText = portalConfig.hero.subtitle;
+
+                    if (portalConfig.hero.images && portalConfig.hero.images.length > 0) {
+                        const header = document.getElementById('mainHeader');
+                        let hIdx = 0;
+                        const rotateHero = () => {
+                            header.style.backgroundImage = `linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('${portalConfig.hero.images[hIdx]}')`;
+                            hIdx = (hIdx + 1) % portalConfig.hero.images.length;
+                        };
+                        rotateHero();
+                        if (portalConfig.hero.images.length > 1) setInterval(rotateHero, 5000);
+                    }
+                }
+
+                renderRegions(portalConfig.regions);
+            } catch (e) {
+                console.error('Cant load config', e);
+                document.getElementById('regionsContainer').innerHTML = '<p style="text-align:center">無法載入區域資料。</p>';
+            }
+        }
+
+        function renderRegions(regions) {
+            const container = document.getElementById('regionsContainer');
+            container.innerHTML = '';
+
+            regions.forEach((region, idx) => {
+                const bgColor = REGION_COLORS[region.id] || '#ffffff';
+
+                let locationsHtml = '';
+                region.groups.forEach(group => {
+                    group.items.forEach(item => {
+                        const isScenic = item.type === 'scenic';
+                        const tagClass = isScenic ? 'location-tag scenic' : 'location-tag';
+
+                        // Determine Link
+                        let linkUrl = item.link || `region.html?name=${encodeURIComponent(item.name)}`;
+
+                        const innerHtml = `
+                            <a href="${linkUrl}" target="_blank" style="text-decoration:none;">
+                                <span class="${tagClass}" data-name="${item.name}">${item.name}</span>
+                            </a>
+                        `;
+
+                        locationsHtml += innerHtml;
+                    });
+                });
+
+                // Carousel
+                const carouselId = `carousel-${idx}`;
+                const section = document.createElement('div');
+                section.className = 'region-section';
+                section.id = `region-${region.id}`;
+                section.innerHTML = `
+                    <div class="region-image-container" id="${carouselId}">
+                         <div class="region-label">${region.name.split(' ')[0]}</div>
+                    </div>
+                    <div class="region-content" style="background-color: ${bgColor};">
+                        <div class="region-header">${region.name}</div>
+                        <div class="locations-grid">
+                            ${locationsHtml}
+                        </div>
+                    </div>
+                `;
+                container.appendChild(section);
+
+                let slides = [];
+                if (region.images && region.images.length > 0) slides = region.images;
+                else if (region.image) slides = [region.image];
+
+                if (slides.length === 0) {
+                    const key = getEnglishKey(region.name);
+                    slides = [
+                        `https://source.unsplash.com/800x600/?${key},scenery`,
+                        `https://source.unsplash.com/800x600/?${key},travel`
+                    ];
+                }
+                initCarousel(carouselId, slides);
+            });
+        }
+
+        function getEnglishKey(chinese) {
+            if (chinese.includes('北')) return 'Taipei';
+            if (chinese.includes('中')) return 'Taichung';
+            if (chinese.includes('南')) return 'Kaohsiung';
+            if (chinese.includes('東')) return 'Hualien';
+            if (chinese.includes('島')) return 'island';
+            return 'Taiwan';
+        }
+
+        function initCarousel(containerId, imageUrls) {
+            const container = document.getElementById(containerId);
+            imageUrls.forEach((url, i) => {
+                const div = document.createElement('div');
+                div.className = `carousel-slide${i === 0 ? ' active' : ''}`;
+                div.style.backgroundImage = `url('${url}')`;
+                container.insertBefore(div, container.firstChild);
+            });
+            let idx = 0;
+            const slides = container.querySelectorAll('.carousel-slide');
+            if (slides.length > 1) {
+                setInterval(() => {
+                    slides.forEach(s => s.classList.remove('active'));
+                    idx = (idx + 1) % slides.length;
+                    slides[idx].classList.add('active');
+                }, 4000);
+            }
+        }
+
+        async function performSearch() {
+            const keyword = document.getElementById('searchInput').value.trim();
+            if (!keyword) { alert('請輸入關鍵字'); return; }
+
+            const resultsGrid = document.getElementById('resultsGrid');
+            const hotelResult = document.getElementById('hotel-result-section');
+            resultsGrid.innerHTML = '<p style="padding:20px; text-align:center;"><i class="fas fa-spinner fa-spin"></i> 搜尋中...</p>';
+            hotelResult.style.display = 'block';
+            hotelResult.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            document.getElementById('search-keyword-display').innerText = keyword;
+
+            let foundHotels = [];
+            let matchedRegionIds = new Set();
+            let processedItems = new Set(); // Prevent duplicates
+
+            // 1. Traverse Config to find matching Sub-Regions (Cities/Scenic)
+            if (portalConfig && portalConfig.regions) {
+                for (const region of portalConfig.regions) {
+                    let regionMatches = false;
+
+                    // Check Big Region Name
+                    if (region.name.includes(keyword)) regionMatches = true;
+
+                    // Check Sub items
+                    for (const group of region.groups) {
+                        for (const item of group.items) {
+
+                            // Match Logic:
+                            // 1. Direct Match
+                            // 2. Keyword Match (from config keywords)
+                            // 3. Fallback Map Match
+
+                            let forceInclude = false;
+
+                            // Check custom keywords (e.g. user set "嘉義" for "阿里山")
+                            if (item.keywords && item.keywords.includes(keyword)) {
+                                forceInclude = true;
+                            }
+                            // Check default map
+                            else if (DEFAULT_RELATED_MAP[keyword] && DEFAULT_RELATED_MAP[keyword].includes(item.name)) {
+                                forceInclude = true;
+                            }
+
+                            if (item.name.includes(keyword) || regionMatches || forceInclude) {
+
+                                if (processedItems.has(item.name)) continue;
+                                processedItems.add(item.name);
+
+                                matchedRegionIds.add(region.id);
+
+                                // HIGHLIGHT TAG
+                                const tag = document.querySelector(`span[data-name="${item.name}"]`);
+                                if (tag) {
+                                    tag.classList.add('highlight');
+                                    setTimeout(() => tag.classList.remove('highlight'), 3000);
+                                }
+
+                                // FETCH DATA
+                                try {
+                                    // Special mapping: Alishan -> Default operators.json
+                                    let url = `/api/operators?region=${encodeURIComponent(item.name)}`;
+                                    if (item.name === '阿里山') {
+                                        url = '/api/operators';
+                                    }
+
+                                    const res = await fetch(url);
+                                    const data = await res.json();
+                                    if (Array.isArray(data)) foundHotels.push(...data);
+                                } catch (e) {
+                                    // ignore
+                                }
+                            }
+                        }
+                    }
+
+                    if (regionMatches) {
+                        matchedRegionIds.add(region.id);
+                        const section = document.getElementById(`region-${region.id}`);
+                        if (section) {
+                            section.style.border = "2px solid #ed8936";
+                            setTimeout(() => section.style.border = "1px solid #edf2f7", 3000);
+                        }
+                    }
+                }
+            }
+
+            // Deduplicate hotels by ID
+            const uniqueHotels = [];
+            const ids = new Set();
+            foundHotels.forEach(h => {
+                if (!ids.has(h.id)) {
+                    ids.add(h.id);
+                    uniqueHotels.push(h);
+                }
+            });
+
+            renderSearchResults(uniqueHotels);
+        }
+
+        function renderSearchResults(hotels) {
+            const grid = document.getElementById('resultsGrid');
+            if (hotels.length === 0) {
+                grid.innerHTML = '<p style="grid-column: 1/-1; text-align:center; padding:30px; color:#666;">找不到符合條件的旅宿。</p>';
+                return;
+            }
+
+            grid.innerHTML = hotels.map(hotel => `
+                <div class="hotel-card">
+                    <div class="hotel-img" style="background-image: url('${hotel.image || 'https://via.placeholder.com/300?text=No+Image'}');"></div>
+                    <div class="hotel-info">
+                        <div class="hotel-name">${hotel.name}</div>
+                        <div class="hotel-tags">
+                            ${(hotel.tags || []).map(tag => `<span class="hotel-tag">${tag}</span>`).join('')}
+                        </div>
+                        <div style="font-size:0.85rem; color:#666; margin-bottom:5px;">
+                             <i class="fas fa-map-marker-alt"></i> ${hotel.address || hotel.location || '未知地點'}
+                        </div>
+                        <div class="hotel-contact">
+                            <span class="hotel-tel"><i class="fas fa-phone"></i> ${hotel.tel || ''}</span>
+                            ${hotel.link ? `<a href="${hotel.link}" target="_blank" class="book-btn">立即預訂</a>` : ''}
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+    </script>
+</body>
+
+</html>

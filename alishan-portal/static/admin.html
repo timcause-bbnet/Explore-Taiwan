@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>業者管理後台 | Alishan Portal</title>
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- CSS -->
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        /* GLOBAL RESET FOR IFRAME CONTEXT */
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            /* Prevent full page scroll, handle inside layout */
+        }
+
+        .admin-layout {
+            display: grid;
+            grid-template-columns: 350px 1fr;
+            gap: 2rem;
+            max-width: 1400px;
+            /* Use Flex to fill vertical space correctly */
+            height: calc(100% - 60px);
+            /* Subtract Nav Height */
+            margin: 0 auto;
+            /* Center horizontally */
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        /* Make panels fill height */
+        .list-panel,
+        .edit-panel {
+            height: 100%;
+            overflow: hidden;
+            /* Important for internal scrolling */
+            display: flex;
+            flex-direction: column;
+        }
+
+        .main-panel-container {
+            height: 100%;
+            overflow: hidden;
+        }
+
+        /* Sidebar List */
+        .list-panel {
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .list-header {
+            padding: 1rem;
+            background: #f8f9fa;
+            border-bottom: 1px solid #eee;
+            justify-content: space-between;
+            align-items: center;
+            flex-shrink: 0;
+            /* Header shouldn't shrink */
+        }
+
+        .tab-btn {
+            border: none;
+            background: none;
+            padding: 8px 12px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            color: #666;
+            margin-right: 5px;
+            border-radius: 6px;
+        }
+
+        .tab-btn.active {
+            background: white;
+            color: var(--primary);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            font-weight: 600;
+        }
+
+        .list-header h3 {
+            margin: 0;
+            color: var(--primary);
+        }
+
+        .add-new-btn {
+            background: var(--primary);
+            color: #fff;
+            border: none;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.2s;
+        }
+
+        .add-new-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .panel-content {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        .operator-list {
+            flex-grow: 1;
+            overflow-y: auto;
+            padding: 0.5rem;
+            /* Scrollbar Visibility Force */
+            scrollbar-color: #888 #f1f1f1;
+            scrollbar-width: thin;
+        }
+
+        /* Large padding at bottom to prevent accidental overlap */
+        .operator-list {
+            padding-bottom: 200px !important;
+        }
+
+        /* Webkit scrollbar styling */
+        .operator-list::-webkit-scrollbar {
+            width: 12px;
+            /* Thicker for visibility */
+            display: block;
+        }
+
+        .operator-list::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        .operator-list::-webkit-scrollbar-thumb {
+            background: #888;
+            /* Darker contrast */
+            border-radius: 6px;
+            border: 2px solid #f1f1f1;
+        }
+
+        .operator-list::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+
+        .list-item {
+            padding: 1rem;
+            border-bottom: 1px solid #f0f0f0;
+            cursor: pointer;
+            transition: 0.2s;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 5px;
+        }
+
+        .list-item:hover {
+            background-color: #f0f7f7;
+        }
+
+        .list-item.active {
+            background-color: #e0efef;
+            border-left: 4px solid var(--primary);
+        }
+
+        .list-item img {
+            width: 50px;
+            height: 50px;
+            border-radius: 6px;
+            object-fit: cover;
+        }
+
+        .list-item-info h4 {
+            margin: 0 0 5px 0;
+            font-size: 0.95rem;
+            color: #333;
+        }
+
+        .list-item-info span {
+            font-size: 0.8rem;
+            color: #888;
+        }
+
+        /* Edit Form */
+        .edit-panel {
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            padding: 2rem;
+            overflow-y: auto;
+            /* Allow form scrolling */
+        }
+
+        .edit-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #eee;
+        }
+
+        .action-btns button {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            margin-left: 10px;
+        }
+
+        .btn-delete {
+            background: #fee;
+            color: #dc3545;
+        }
+
+        .btn-delete:hover {
+            background: #fcc;
+        }
+
+        .btn-save {
+            background: var(--primary);
+            color: #fff;
+        }
+
+        .btn-save:hover {
+            opacity: 0.9;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+
+        .full-width {
+            grid-column: 1 / -1;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #555;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 0.95rem;
+        }
+
+        .form-group textarea {
+            height: 120px;
+            resize: vertical;
+        }
+
+        .navbar {
+            height: 60px;
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+            color: white;
+            justify-content: space-between;
+        }
+
+        .navbar a {
+            text-decoration: none;
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar" style="background: var(--primary); position: sticky; top:0; z-index:100;">
+        <div class="logo">Alishan Admin</div>
+        <div class="nav-links">
+            <a href="index.html" target="_blank"><i class="fas fa-external-link-alt"></i> 前往前台</a>
+        </div>
+    </nav>
+
+    <div class="admin-layout">
+        <!-- Sidebar -->
+        <div class="list-panel">
+            <div class="list-header" style="justify-content: space-around;">
+                <!-- Tabs -->
+                <button class="tab-btn active" onclick="switchTab('operators')"><i class="fas fa-bed"></i> 業者</button>
+                <button class="tab-btn" onclick="switchTab('attractions')"><i class="fas fa-mountain"></i> 景點</button>
+                <button class="tab-btn" onclick="switchTab('delicacies')"><i class="fas fa-utensils"></i> 美食</button>
+                <button class="tab-btn" onclick="switchTab('settings')"><i class="fas fa-images"></i> 輪播</button>
+            </div>
+
+            <!-- Sidebar Content: Operators -->
+            <div id="operatorsPanel" class="panel-content">
+                <div class="list-header">
+                    <h4>業者清單</h4>
+                    <div style="display:flex; gap:5px;">
+                        <button class="add-new-btn" onclick="prepareImport('operators')" title="匯入 CSV"
+                            style="background:#718096;"><i class="fas fa-file-import"></i></button>
+                        <button class="add-new-btn" onclick="prepareNew('operators')" title="新增業者"><i
+                                class="fas fa-plus"></i></button>
+                    </div>
+                </div>
+                <div class="operator-list" id="operatorList">
+                    <!-- Items -->
+                </div>
+            </div>
+
+            <!-- Sidebar Content: Attractions -->
+            <div id="attractionsPanel" class="panel-content" style="display: none;">
+                <div class="list-header">
+                    <h4>景點清單</h4>
+                    <div style="display:flex; gap:5px;">
+                        <button class="add-new-btn" onclick="prepareImport('attractions')" title="匯入 CSV"
+                            style="background:#718096;"><i class="fas fa-file-import"></i></button>
+                        <button class="add-new-btn" onclick="prepareNew('attractions')" title="新增景點"><i
+                                class="fas fa-plus"></i></button>
+                    </div>
+                </div>
+                <div class="operator-list" id="attractionList">
+                    <!-- Items -->
+                </div>
+            </div>
+
+            <!-- Sidebar Content: Delicacies -->
+            <div id="delicaciesPanel" class="panel-content" style="display: none;">
+                <div class="list-header">
+                    <h4>美食清單</h4>
+                    <div style="display:flex; gap:5px;">
+                        <button class="add-new-btn" onclick="prepareImport('delicacies')" title="匯入 CSV"
+                            style="background:#718096;"><i class="fas fa-file-import"></i></button>
+                        <button class="add-new-btn" onclick="prepareNew('delicacies')" title="新增美食"><i
+                                class="fas fa-plus"></i></button>
+                    </div>
+                </div>
+                <div class="operator-list" id="delicacyList">
+                    <!-- Items -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Area Container -->
+        <div class="main-panel-container">
+
+            <!-- 1. Edit Form (Shared) -->
+            <div class="edit-panel" id="operatorEditPanel">
+                <div id="welcomeMessage" style="text-align: center; color: #888; margin-top: 100px;">
+                    <i class="fas fa-edit" style="font-size: 3rem; margin-bottom: 20px;"></i>
+                    <p>請從左側選擇項目進行編輯，或點擊「+」新增。</p>
+                </div>
+
+                <form id="editForm" style="display: none;">
+                    <div class="edit-header">
+                        <h2 id="formTitle">編輯項目</h2>
+                        <div class="action-btns">
+                            <button type="button" class="btn-delete" id="deleteBtn">刪除</button>
+                            <button type="submit" class="btn-save" id="saveBtn">儲存變更</button>
+                        </div>
+                    </div>
+
+                    <input type="hidden" name="id">
+                    <input type="hidden" name="dataType" id="dataTypeField"> <!-- To track what we are editing -->
+
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>名稱 (Name)</label>
+                            <input type="text" name="name" required>
+                        </div>
+
+                        <div class="form-group" data-for="operators">
+                            <label>類型 (Category)</label>
+                            <select name="category">
+                                <option value="民宿">民宿</option>
+                                <option value="飯店">飯店</option>
+                                <option value="露營">露營</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group" data-for="delicacies" style="display:none;">
+                            <label>價格 (Price)</label>
+                            <input type="text" name="price" placeholder="例如：$100">
+                        </div>
+
+                        <div class="form-group">
+                            <label>地點 (Location)</label>
+                            <!-- Changed to Input for flexibility across all types -->
+                            <input type="text" name="location" list="locationOptions" placeholder="輸入或選擇地點">
+                            <datalist id="locationOptions">
+                                <option value="森林遊樂區">
+                                <option value="奮起湖">
+                                <option value="隙頂">
+                                <option value="石棹">
+                                <option value="瑞里">
+                            </datalist>
+                        </div>
+
+                        <!-- NEW ADDRESS FIELD -->
+                        <div class="form-group" data-for="operators">
+                            <label>地址 (Address)</label>
+                            <input type="text" name="address" placeholder="例如：嘉義縣阿里山鄉中正村XX號">
+                        </div>
+
+                        <div class="form-group" data-for="operators">
+                            <label>聯絡電話 (Tel)</label>
+                            <input type="text" name="tel">
+                        </div>
+
+                        <div class="form-group full-width" data-for="operators">
+                            <label>訂房連結 (URL)</label>
+                            <input type="url" name="link">
+                        </div>
+
+                        <div class="form-group full-width">
+                            <label>特色標籤 (Tags)</label>
+                            <input type="text" name="tags" placeholder="以逗號分隔，例如：雲海, 檜木">
+                        </div>
+
+                        <div class="form-group full-width">
+                            <label>簡介 (Description)</label>
+                            <textarea name="description"></textarea>
+                        </div>
+
+                        <div class="form-group full-width">
+                            <label>圖片管理 (Images)</label>
+
+                            <!-- Existing Images -->
+                            <div id="existingImages"
+                                style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 15px;">
+                                <!-- JS will inject thumbnails here -->
+                            </div>
+
+                            <!-- New Uploads -->
+                            <div
+                                style="background: #f8fbff; padding: 15px; border-radius: 8px; border: 1px dashed #bldfe6;">
+                                <p style="margin: 0 0 10px 0; font-size: 0.9rem; color: #555;">
+                                    <i class="fas fa-cloud-upload-alt"></i> 上傳新照片 (最多 5 張)
+                                </p>
+                                <input type="file" class="file-input" accept="image/*" style="margin-bottom: 5px;">
+                                <input type="file" class="file-input" accept="image/*" style="margin-bottom: 5px;">
+                                <input type="file" class="file-input" accept="image/*" style="margin-bottom: 5px;">
+                                <input type="file" class="file-input" accept="image/*" style="margin-bottom: 5px;">
+                                <input type="file" class="file-input" accept="image/*">
+                                <small style="color: #666; display: block; margin-top: 5px;">
+                                    建議尺寸：800x600 像素 (JPG/PNG)。單張請勿超過 2MB 以免上傳過慢。
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+            </div>
+            </form>
+        </div> <!-- End Operator Edit Panel -->
+
+        <!-- 2. Site Settings Panel (Hidden by default) -->
+        <div class="edit-panel" id="settingsPanel" style="display: none;">
+            <div class="edit-header">
+                <h2>首頁大圖設定</h2>
+                <div style="color: #666; font-size: 0.9rem;">
+                    <i class="fas fa-info-circle"></i> 設定首頁輪播展示的精選照片
+                </div>
+            </div>
+
+            <form id="heroForm">
+                <div class="form-group full-width">
+                    <label>現有輪播圖 (勾選以保留)</label>
+                    <div id="heroImagesList"
+                        style="display: flex; gap: 15px; flex-wrap: wrap; padding: 10px; background: #f9f9f9; border-radius: 8px;">
+                        <!-- JS inject -->
+                    </div>
+                </div>
+
+                <div class="form-group full-width" style="margin-top: 2rem;">
+                    <label style="font-size: 1.1rem; color: var(--primary);">上傳新照片</label>
+                    <div style="background: #fff8f0; padding: 25px; border-radius: 12px; border: 2px dashed #e6c8a0;">
+                        <div style="text-align: center; margin-bottom: 20px;">
+                            <i class="fas fa-images" style="font-size: 3rem; color: #e6c8a0; margin-bottom: 10px;"></i>
+                            <p style="margin: 0; font-weight: bold; color: #555;">選擇欲上傳的高畫質照片</p>
+                            <p style="margin: 5px 0 0 0; font-size: 0.9rem; color: #888;">
+                                建議尺寸：<span style="color: #d35400; font-weight: bold;">1920 x 1080</span> 像素 (16:9) <br>
+                                支援格式：JPG, PNG (單張 < 5MB) </p>
+                        </div>
+
+                        <div
+                            style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px;">
+                            <input type="file" class="hero-file-input" accept="image/*">
+                            <input type="file" class="hero-file-input" accept="image/*">
+                            <input type="file" class="hero-file-input" accept="image/*">
+                            <input type="file" class="hero-file-input" accept="image/*">
+                            <input type="file" class="hero-file-input" accept="image/*">
+                        </div>
+                    </div>
+                </div>
+
+                <div style="text-align: right; margin-top: 20px; border-top: 1px solid #eee; padding-top: 20px;">
+                    <button type="submit" class="submit-btn" id="heroSaveBtn"
+                        style="background: var(--primary); color: white; padding: 12px 30px; border: none; border-radius: 6px; font-size: 1rem; cursor: pointer; transition:0.3s;">
+                        <i class="fas fa-save"></i> 儲存首頁設定
+                    </button>
+                </div>
+            </form>
+        </div>
+
+    </div> <!-- End Main Panel Container -->
+    </div> <!-- End Admin Layout -->
+
+    <script src="js/admin.js?v=4"></script>
+</body>
+
+</html>

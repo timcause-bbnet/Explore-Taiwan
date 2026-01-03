@@ -1,0 +1,199 @@
+{
+  "regions": [
+    {
+      "id": "north",
+      "name": "北台灣 North Taiwan",
+      "image": "https://images.unsplash.com/photo-1549140600-78c9b92209d9?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+      "groups": [
+        {
+          "name": "縣市",
+          "items": [
+            {
+              "name": "基隆",
+              "type": "city"
+            },
+            {
+              "name": "新北",
+              "type": "city"
+            },
+            {
+              "name": "台北",
+              "type": "city"
+            },
+            {
+              "name": "桃園",
+              "type": "city"
+            },
+            {
+              "name": "新竹",
+              "type": "city"
+            },
+            {
+              "name": "苗栗",
+              "type": "city"
+            }
+          ]
+        }
+      ],
+      "images": [
+        "uploads/1766979698_7c11.jpg",
+        "uploads/1766979749_6048.jpg",
+        "uploads/1766979749_bfad.jpg"
+      ]
+    },
+    {
+      "id": "central",
+      "name": "中台灣 Central Taiwan",
+      "image": "https://images.unsplash.com/photo-1532431693822-29367c3b246a?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+      "groups": [
+        {
+          "name": "縣市",
+          "items": [
+            {
+              "name": "台中",
+              "type": "city"
+            },
+            {
+              "name": "南投",
+              "type": "city"
+            },
+            {
+              "name": "彰化",
+              "type": "city"
+            }
+          ]
+        },
+        {
+          "name": "風景區",
+          "items": [
+            {
+              "name": "清境農場",
+              "type": "scenic"
+            }
+          ]
+        }
+      ],
+      "images": [
+        "uploads/1766979698_c498.jpg"
+      ]
+    },
+    {
+      "id": "south",
+      "name": "南台灣 South Taiwan",
+      "image": "https://images.unsplash.com/photo-1621345906979-3079234812a0?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+      "groups": [
+        {
+          "name": "縣市",
+          "items": [
+            {
+              "name": "雲林",
+              "type": "city"
+            },
+            {
+              "name": "嘉義",
+              "type": "city"
+            },
+            {
+              "name": "台南",
+              "type": "city"
+            },
+            {
+              "name": "高雄",
+              "type": "city"
+            },
+            {
+              "name": "屏東",
+              "type": "city"
+            },
+            {
+              "name": "小琉球",
+              "type": "city"
+            }
+          ]
+        },
+        {
+          "name": "風景區",
+          "items": [
+            {
+              "name": "阿里山",
+              "type": "scenic",
+              "link": "index.html",
+              "highlight": true
+            }
+          ]
+        }
+      ],
+      "images": [
+        "uploads/1766979698_7320.jpg",
+        "uploads/1766979749_e5ae.jpg",
+        "uploads/1766979749_b00c.jpg"
+      ]
+    },
+    {
+      "id": "east",
+      "name": "宜花東 East Taiwan",
+      "image": "https://images.unsplash.com/photo-1517454228919-4b6840a1b8d2?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+      "groups": [
+        {
+          "name": "縣市",
+          "items": [
+            {
+              "name": "宜蘭",
+              "type": "city"
+            },
+            {
+              "name": "花蓮",
+              "type": "city"
+            },
+            {
+              "name": "台東",
+              "type": "city"
+            },
+            {
+              "name": "蘭嶼",
+              "type": "city"
+            },
+            {
+              "name": "綠島",
+              "type": "city"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "islands",
+      "name": "外島 Islands",
+      "image": "https://images.unsplash.com/photo-1594042861618-971c2657d42e?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+      "groups": [
+        {
+          "name": "縣市",
+          "items": [
+            {
+              "name": "澎湖",
+              "type": "city"
+            },
+            {
+              "name": "金門",
+              "type": "city"
+            },
+            {
+              "name": "馬祖",
+              "type": "city"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "hero": {
+    "title": "Explore Taiwan",
+    "subtitle": "探索台灣之美",
+    "images": [
+      "uploads/1766979698_d30b.jpg",
+      "uploads/1766979698_bcaa.jpg",
+      "uploads/1766979698_f7ae.jpg",
+      "uploads/1766979698_eb36.jpg"
+    ]
+  }
+}

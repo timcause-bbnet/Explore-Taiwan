@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Super Admin | 總後台管理系統</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #2d3748;
+            --accent: #3182ce;
+            --bg: #f7fafc;
+            --white: #fff;
+        }
+
+        body {
+            margin: 0;
+            font-family: sans-serif;
+            background: var(--bg);
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 250px;
+            background: var(--primary);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .logo {
+            padding: 20px;
+            font-size: 1.5rem;
+            font-weight: bold;
+            border-bottom: 1px solid #4a5568;
+        }
+
+        .action-bar {
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.2);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .nav-links {
+            flex: 1;
+            padding: 20px 0;
+            overflow-y: auto;
+            /* Scrollbar style for sidebar */
+            scrollbar-width: thin;
+            scrollbar-color: #718096 #2d3748;
+        }
+
+        .nav-item {
+            padding: 10px 20px;
+            cursor: pointer;
+            transition: 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            opacity: 0.7;
+            border-left: 4px solid transparent;
+            font-size: 0.95rem;
+        }
+
+        .nav-item:hover,
+        .nav-item.active {
+            background: rgba(255, 255, 255, 0.1);
+            opacity: 1;
+            border-left-color: var(--accent);
+        }
+
+        .bottom-links {
+            margin-top: auto;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* Main Content */
+        .main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .header {
+            background: white;
+            padding: 15px 30px;
+            border-bottom: 1px solid #e2e8f0;
+            font-weight: bold;
+            flex-shrink: 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* Scrollable Area */
+        .content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 30px;
+            padding-bottom: 600px;
+            /* Massive padding to strictly prevent cutoff */
+            height: 100%;
+            scroll-behavior: smooth;
+        }
+
+        /* CUSTOM SCROLLBAR STYLES */
+        ::-webkit-scrollbar {
+            width: 14px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-left: 1px solid #e2e8f0;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background-color: #a0aec0;
+            border-radius: 7px;
+            border: 3px solid #f1f1f1;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background-color: #718096;
+        }
+
+        /* Portal Editor */
+        .editor-container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .settings-card {
+            background: white;
+            border-radius: 8px;
+            padding: 25px;
+            margin-bottom: 30px;
+            border: 1px solid #e2e8f0;
+            border-left: 5px solid var(--accent);
+        }
+
+        .region-card {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid #e2e8f0;
+            display: block;
+        }
+
+        .region-header {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #ebf8ff;
+            padding-bottom: 10px;
+        }
+
+        .group-section {
+            margin-bottom: 15px;
+        }
+
+        .group-title {
+            font-size: 0.9rem;
+            color: #718096;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        .items-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .item-row {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: #f7fafc;
+            padding: 5px;
+            border-radius: 6px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .item-tag {
+            background: #edf2f7;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            width: 100%;
+            justify-content: space-between;
+        }
+
+        .item-tag.scenic {
+            background: #feebc8;
+            color: #c05621;
+        }
+
+        .item-tag i {
+            cursor: pointer;
+            color: #a0aec0;
+        }
+
+        .item-tag i:hover {
+            color: #e53e3e;
+        }
+
+        .add-form {
+            display: flex;
+            gap: 10px;
+        }
+
+        .add-input {
+            padding: 8px;
+            border: 1px solid #cbd5e0;
+            border-radius: 4px;
+        }
+
+        .btn {
+            padding: 8px 15px;
+            background: var(--accent);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        .btn:hover {
+            background: #2c5282;
+        }
+
+        .btn-green {
+            background: #38a169;
+        }
+
+        .btn-green:hover {
+            background: #2f855a;
+        }
+
+        /* Image Preview */
+        .img-preview-grid {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 10px;
+        }
+
+        .img-thumb {
+            width: 80px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+        }
+
+        /* Iframe */
+        .iframe-wrapper {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        .view {
+            display: none;
+            height: 100%;
+        }
+
+        .view.active {
+            display: block;
+        }
+
+        #loading {
+            text-align: center;
+            padding: 50px;
+            color: #aaa;
+        }
+
+        /* Spacer to force scroll */
+        .bottom-spacer {
+            height: 200px;
+            width: 100%;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="sidebar">
+        <div class="logo">總後台管理</div>
+
+        <!-- Top Action Buttons -->
+        <div class="action-bar">
+            <button class="btn btn-green" style="width:100%; font-size: 1rem; padding: 12px;" onclick="saveToApi()">
+                <i class="fas fa-save"></i> 儲存所有變更
+            </button>
+            <div style="display:flex; gap:5px;">
+                <button class="btn" style="flex:1; background: #4a5568;" onclick="addBigRegion()">
+                    <i class="fas fa-plus"></i> 新增區域
+                </button>
+                <button class="btn" style="flex:1; background: #718096;" onclick="showPortalSettings()">
+                    設定頁面
+                </button>
+            </div>
+        </div>
+
+        <div class="nav-links" id="sidebarNav">
+            <div style="padding:20px;">Loading...</div>
+        </div>
+
+        <div class="bottom-links">
+            <a href="/portal.html" target="_blank" style="text-decoration:none; color:inherit;">
+                <div class="nav-item">
+                    <i class="fas fa-external-link-alt"></i> 前往首頁 (Portal)
+                </div>
+            </a>
+            <div class="nav-item" onclick="showPortalSettings()">
+                <i class="fas fa-cog"></i> 網站架構設定
+            </div>
+        </div>
+    </div>
+
+    <div class="main">
+        <div class="header">
+            <span id="pageTitle">網站總覽</span>
+            <div style="color: #718096; font-size: 0.9rem;" id="regionBreadcrumb"></div>
+        </div>
+
+        <!-- PORTAL EDITOR VIEW (Settings) -->
+        <div id="view-portal" class="view active">
+            <div class="content">
+                <div class="editor-container" id="regionsContainer">
+                    <p id="loading">正在載入設定...</p>
+                </div>
+                <div class="bottom-spacer"></div> <!-- Spacer -->
+            </div>
+        </div>
+
+        <!-- GENERIC ADMIN VIEW (Iframe) -->
+        <div id="view-admin" class="view">
+            <iframe id="adminFrame" src="" class="iframe-wrapper"></iframe>
+        </div>
+    </div>
+
+    <script>
+        let configData = null;
+
+        async function loadConfig() {
+            try {
+                const res = await fetch('/api/data/portal_config.json');
+                if (!res.ok) throw new Error('API Error');
+                configData = await res.json();
+                renderSidebar();
+                showPortalSettings();
+            } catch (e) {
+                console.error(e);
+                configData = getFallbackData();
+                renderSidebar();
+                showPortalSettings();
+            }
+        }
+
+        function renderSidebar() {
+            const nav = document.getElementById('sidebarNav');
+            nav.innerHTML = '';
+
+            if (configData && configData.regions) {
+                configData.regions.forEach(r => {
+                    nav.innerHTML += `
+                        <div style="padding: 10px 20px; color: #a0aec0; font-size: 0.85rem; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; margin-top: 15px;">
+                            ${r.name.split(' ')[0]}
+                            <i class="fas fa-plus-circle" style="float:right; cursor:pointer;" onclick="focusAddSmallRegion('${r.id}')" title="新增小區"></i>
+                        </div>
+                    `;
+                    r.groups.forEach(g => {
+                        g.items.forEach(item => {
+                            nav.innerHTML += `
+                                <div class="nav-item" onclick="openRegionAdmin('${item.name}', '${r.name}')">
+                                    <i class="fas fa-${item.type === 'scenic' ? 'mountain' : 'city'}"></i> ${item.name}
+                                </div>
+                            `;
+                        });
+                    });
+                });
+            }
+        }
+
+        function focusAddSmallRegion(regionId) {
+            showPortalSettings();
+            setTimeout(() => {
+                const card = document.querySelector(`.region-card[data-id="${regionId}"]`);
+                if (card) {
+                    card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    card.style.border = "2px solid #3182ce";
+                    setTimeout(() => card.style.border = "1px solid #e2e8f0", 2000);
+                }
+            }, 500);
+        }
+
+        function openRegionAdmin(subRegionName, bigRegionName) {
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+
+            document.getElementById('view-portal').classList.remove('active');
+            document.getElementById('view-admin').classList.add('active');
+
+            document.getElementById('pageTitle').innerText = subRegionName + ' 旅宿管理';
+            document.getElementById('regionBreadcrumb').innerText = `${bigRegionName} > ${subRegionName}`;
+
+            // Special Case: "阿里山" maps to the default empty string in server logic (operators.json)
+            const regionParam = subRegionName === '阿里山' ? '' : subRegionName;
+            const src = `admin.html?region=${encodeURIComponent(regionParam)}&title=${encodeURIComponent(subRegionName)}`;
+
+            const frame = document.getElementById('adminFrame');
+            if (frame.getAttribute('src') !== src) {
+                frame.src = src;
+            }
+        }
+
+        function showPortalSettings() {
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+            document.getElementById('view-portal').classList.add('active');
+            document.getElementById('view-admin').classList.remove('active');
+            document.getElementById('pageTitle').innerText = '網站架構設定';
+            document.getElementById('regionBreadcrumb').innerText = '總覽';
+            renderEditor();
+        }
+
+        function renderEditor() {
+            const container = document.getElementById('regionsContainer');
+            container.innerHTML = '';
+
+            // 1. GLOBAL SETTINGS CARD
+            const hero = configData.hero || { title: 'Explore Taiwan', subtitle: '探索台灣之美' };
+            const heroImages = hero.images || [];
+
+            const settingsCard = document.createElement('div');
+            settingsCard.className = 'settings-card';
+            settingsCard.innerHTML = `
+                <div style="font-size: 1.3rem; font-weight: bold; margin-bottom: 20px; color: #2d3748;">
+                    <i class="fas fa-home"></i> 首頁大圖與文字設定
+                </div>
+                <div style="margin-bottom: 15px;">
+                    <label style="display:block; margin-bottom:5px; font-weight:bold;">網站主標題 (H1)</label>
+                    <input type="text" id="heroTitle" value="${hero.title || ''}" class="add-input" style="width: 100%; box-sizing: border-box;">
+                </div>
+                 <div style="margin-bottom: 15px;">
+                    <label style="display:block; margin-bottom:5px; font-weight:bold;">副標題 (Subtitle)</label>
+                    <input type="text" id="heroSubtitle" value="${hero.subtitle || ''}" class="add-input" style="width: 100%; box-sizing: border-box;">
+                </div>
+                <div style="margin-bottom: 15px;">
+                    <label style="display:block; margin-bottom:5px; font-weight:bold;">首頁輪播大圖 (可多選，最多5張)</label>
+                    <input type="file" multiple id="heroImagesInput" accept="image/*" onchange="checkMaxFiles(this, 5)">
+                    <div class="img-preview-grid">
+                        ${heroImages.map(url => `
+                            <div>
+                                <img src="${url}" class="img-thumb">
+                                <div style="font-size:0.8rem;text-align:center;cursor:pointer;color:red;" onclick="removeHeroImage('${url}')">刪除</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+            container.appendChild(settingsCard);
+
+            // 2. REGIONS
+            if (configData.regions) {
+                configData.regions.forEach((region, rIdx) => {
+                    const card = document.createElement('div');
+                    card.className = 'region-card';
+                    card.dataset.id = region.id;
+
+                    const regionImages = region.images || (region.image ? [region.image] : []);
+
+                    let groupsHtml = '';
+                    region.groups.forEach((group, gIdx) => {
+                        let itemsHtml = group.items.map((item, iIdx) => `
+                            <div class="item-row">
+                                <span class="item-tag ${item.type === 'scenic' ? 'scenic' : ''}">
+                                    ${item.name}
+                                    <i class="fas fa-times" onclick="removeItem(${rIdx}, ${gIdx}, ${iIdx})"></i>
+                                </span>
+                                <input type="text" placeholder="關鍵字(如:嘉義)" 
+                                    style="box-sizing:border-box; width:100%; margin-top:5px; font-size:0.8rem; padding:4px; border:1px solid #ddd; text-align:center; border-radius:4px;"
+                                    value="${item.keywords || ''}" 
+                                    onchange="updateKeywords(${rIdx}, ${gIdx}, ${iIdx}, this.value)">
+                            </div>
+                        `).join('');
+
+                        groupsHtml += `
+                            <div class="group-section">
+                                <div class="group-title">${group.name}</div>
+                                <div class="items-list">${itemsHtml}</div>
+                                <div class="add-form">
+                                    <input type="text" placeholder="新增地點..." class="add-input" id="input-${rIdx}-${gIdx}" onkeypress="handleEnter(event, ${rIdx}, ${gIdx})">
+                                    <button class="btn" onclick="addItem(${rIdx}, ${gIdx})">新增</button>
+                                </div>
+                            </div>
+                        `;
+                    });
+
+                    card.innerHTML = `
+                        <div class="region-header">
+                            ${region.name} 
+                            <button class="btn" style="float:right; background:#e53e3e; font-size:0.8rem; padding: 4px 8px;" onclick="removeBigRegion(${rIdx})">刪除大區</button>
+                        </div>
+                        
+                        <!-- Region Images Upload -->
+                         <div style="margin-bottom: 20px; padding: 15px; background: #f8fafc; border-radius: 6px;">
+                            <label style="display:block; margin-bottom:5px; font-weight:bold; font-size: 0.9rem;">區域輪播小圖 (Region Carousel - 最多5張)</label>
+                            <input type="file" multiple id="regionImg-${rIdx}" accept="image/*" onchange="checkMaxFiles(this, 5)">
+                            <div class="img-preview-grid">
+                                ${regionImages.map(url => `
+                                    <div>
+                                        <img src="${url}" class="img-thumb">
+                                        <div style="font-size:0.8rem;text-align:center;cursor:pointer;color:red;" onclick="removeRegionImage(${rIdx}, '${url}')">刪除</div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+
+                        ${groupsHtml}
+                    `;
+                    container.appendChild(card);
+                });
+            }
+        }
+
+        // Helper
+        function checkMaxFiles(input, max) {
+            if (input.files && input.files.length > max) {
+                alert(`最多只能選擇 ${max} 張圖片。您選擇了 ${input.files.length} 張。`);
+                input.value = ''; // Clear
+            }
+        }
+
+        function toBase64(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = error => reject(error);
+            });
+        }
+
+        function handleEnter(e, rIdx, gIdx) { if (e.key === 'Enter') addItem(rIdx, gIdx); }
+
+        function addItem(rIdx, gIdx) {
+            const input = document.getElementById(`input-${rIdx}-${gIdx}`);
+            if (!input.value.trim()) return;
+            const group = configData.regions[rIdx].groups[gIdx];
+            group.items.push({
+                name: input.value.trim(),
+                type: group.name === '風景區' ? 'scenic' : 'city',
+                keywords: '' // Init empty
+            });
+            input.value = '';
+            renderEditor(); renderSidebar();
+        }
+
+        function updateKeywords(rIdx, gIdx, iIdx, value) {
+            configData.regions[rIdx].groups[gIdx].items[iIdx].keywords = value;
+            // No need to re-render immediately as input keeps value, but good to save state
+            // If user clicks save, it will persist.
+        }
+
+        function removeItem(rIdx, gIdx, iIdx) {
+            if (confirm('確定刪除?')) {
+                configData.regions[rIdx].groups[gIdx].items.splice(iIdx, 1);
+                renderEditor(); renderSidebar();
+            }
+        }
+        function addBigRegion() {
+            const name = prompt('請輸入大區域名稱 (例如: 南南台灣)');
+            if (name) {
+                configData.regions.push({ id: 'new_' + Date.now(), name: name, groups: [{ name: '縣市', items: [] }] });
+                renderEditor(); renderSidebar();
+            }
+        }
+        function removeBigRegion(rIdx) {
+            if (confirm('確定刪除大區?')) {
+                configData.regions.splice(rIdx, 1);
+                renderEditor(); renderSidebar();
+            }
+        }
+
+        function removeHeroImage(url) {
+            if (!configData.hero || !configData.hero.images) return;
+            configData.hero.images = configData.hero.images.filter(x => x !== url);
+            renderEditor();
+        }
+
+        function removeRegionImage(rIdx, url) {
+            let r = configData.regions[rIdx];
+            if (r.images) {
+                r.images = r.images.filter(x => x !== url);
+                if (r.image === url) r.image = r.images[0] || '';
+            }
+            renderEditor();
+        }
+
+        async function saveToApi() {
+            // Update Text Fields
+            if (!configData.hero) configData.hero = {};
+            const hTitle = document.getElementById('heroTitle');
+            if (hTitle) configData.hero.title = hTitle.value;
+            const hSub = document.getElementById('heroSubtitle');
+            if (hSub) configData.hero.subtitle = hSub.value;
+
+            // Collect New Images
+            // 1. Hero
+            const heroInput = document.getElementById('heroImagesInput');
+            if (heroInput && heroInput.files.length > 0) {
+                const files = Array.from(heroInput.files);
+                const b64s = await Promise.all(files.map(toBase64));
+                configData.uploaded_hero_images = b64s;
+            }
+
+            // 2. Regions
+            if (configData.regions) {
+                for (let i = 0; i < configData.regions.length; i++) {
+                    const input = document.getElementById(`regionImg-${i}`);
+                    if (input && input.files.length > 0) {
+                        const files = Array.from(input.files);
+                        const b64s = await Promise.all(files.map(toBase64));
+                        configData.regions[i].uploaded_images = b64s; // Server logic: Add these to existing
+                    }
+                }
+            }
+
+            try {
+                const btn = document.querySelector('.btn-green');
+                const orig = btn.innerHTML;
+                btn.innerText = '儲存中...';
+
+                const res = await fetch('/api/data/portal_config.json', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(configData)
+                });
+
+                if (res.ok) {
+                    alert('設定已儲存！');
+                    loadConfig(); // Reload to get new paths
+                } else alert('儲存失敗');
+
+                btn.innerHTML = orig;
+            } catch (e) { alert('錯誤: ' + e); }
+        }
+
+        function getFallbackData() { return { regions: [] }; }
+
+        loadConfig();
+
+    </script>
+</body>
+
+</html>

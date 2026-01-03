@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>旅宿精選</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&family=Playfair+Display:ital,wght@1,400;1,700&display=swap"
+        rel="stylesheet">
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        /* Generic Hero Text */
+        .hero-content h1 {
+            font-size: 3rem;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.7);
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="logo">Vibe.</div>
+        <div class="nav-links">
+            <a href="portal.html">回首頁</a>
+            <a href="#featured">精選旅宿</a>
+            <a href="admin.html" class="btn-outline">業者登入</a>
+        </div>
+    </nav>
+
+    <!-- Hero Carousel -->
+    <header class="hero-carousel" id="heroCarousel">
+        <div class="hero-track" id="heroTrack">
+            <!-- JS will inject images here -->
+        </div>
+        <div class="hero-content">
+            <h1>探索美麗台灣</h1>
+            <p>精選頂級民宿、飯店與露營體驗</p>
+        </div>
+
+        <div class="scroll-down">
+            <i class="fas fa-chevron-down"></i>
+        </div>
+    </header>
+
+    <!-- Sticky Theme Navigation -->
+    <nav class="theme-nav" id="themeNav">
+        <div class="container theme-nav-inner">
+            <a href="#listings" class="nav-item active"><i class="fas fa-search"></i> 開始探索</a>
+            <a href="#attractions" class="nav-item"><i class="fas fa-mountain"></i> 特色景點</a>
+            <a href="#delicacies" class="nav-item"><i class="fas fa-utensils"></i> 美食名產</a>
+        </div>
+    </nav>
+
+    <!-- Filter Section (Listings) -->
+    <section class="filters" id="listings">
+        <button class="filter-btn active" data-filter="all">全部</button>
+        <button class="filter-btn" data-filter="民宿">民宿</button>
+        <button class="filter-btn" data-filter="飯店">飯店</button>
+        <button class="filter-btn" data-filter="露營">露營</button>
+    </section>
+
+    <!-- Operators Grid -->
+    <main class="container">
+        <div class="operators-grid" id="operators-grid">
+            <div class="loading">
+                <i class="fas fa-spinner fa-spin"></i> 載入中...
+            </div>
+        </div>
+    </main>
+
+    <!-- Attractions Section -->
+    <section class="info-section bg-white" id="attractions">
+        <div class="container">
+            <h2 class="section-title">特色景點</h2>
+            <div class="operators-grid" id="attractions-grid">
+                <!-- JS content -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Delicacies Section -->
+    <section class="info-section bg-light" id="delicacies">
+        <div class="container">
+            <h2 class="section-title">美食名產</h2>
+            <div class="operators-grid" id="delicacies-grid">
+                <!-- JS content -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2025 Taiwan Vibe. All Rights Reserved.</p>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="js/region_app.js"></script>
+    <script>
+        // Update URL to add region params for 'admin.html' login button
+        const params = new URLSearchParams(window.location.search);
+        const rName = params.get('name');
+        if (rName) {
+            document.querySelector('.logo').innerText = rName + ' Vibe.';
+            const adminBtn = document.querySelector('a[href="admin.html"]');
+            if (adminBtn) adminBtn.href = `admin.html?region=${encodeURIComponent(rName)}&title=${encodeURIComponent(rName)}`;
+        }
+    </script>
+</body>
+
+</html>

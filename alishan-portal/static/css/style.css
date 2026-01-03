@@ -1,0 +1,667 @@
+:root {
+    /* Color Palette */
+    --primary: #2F4F4F;
+    /* Dark Slate Gray (Forest) */
+    --secondary: #5F9EA0;
+    /* Cadet Blue (Mist) */
+    --accent: #D4AF37;
+    /* Metallic Gold (Sunrise) */
+    --bg-light: #F8F9FA;
+    /* Off White */
+    --text-dark: #333333;
+    --text-light: #666666;
+    --white: #FFFFFF;
+
+    /* Spacing & Radius */
+    --radius-sm: 8px;
+    --radius-lg: 20px;
+    --shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Noto Sans TC', sans-serif;
+    background-color: var(--bg-light);
+    color: var(--text-dark);
+    line-height: 1.6;
+}
+
+/* Navbar */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem 5%;
+    position: absolute;
+    width: 100%;
+    top: 0;
+    z-index: 100;
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.5), transparent);
+}
+
+.logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.8rem;
+    color: var(--white);
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+
+.nav-links a {
+    text-decoration: none;
+    color: var(--white);
+    margin-left: 2rem;
+    font-size: 0.95rem;
+    transition: 0.3s;
+}
+
+.nav-links a:hover {
+    color: var(--accent);
+}
+
+.btn-outline {
+    border: 1px solid var(--white);
+    padding: 0.5rem 1.2rem;
+    border-radius: 50px;
+}
+
+.btn-outline:hover {
+    background: var(--white);
+    color: var(--primary) !important;
+}
+
+/* Hero Carousel */
+.hero-carousel {
+    height: 90vh;
+    position: relative;
+    overflow: hidden;
+    /* Darken overlay */
+    background: #000;
+}
+
+.hero-track {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.hero-slide {
+    position: absolute;
+    /* Stack them */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    transition: opacity 1.5s ease-in-out;
+}
+
+.hero-slide.active {
+    opacity: 1;
+}
+
+.hero-slide img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    /* Slight zoom effect */
+    animation: zoomEffect 15s infinite alternate;
+}
+
+@keyframes zoomEffect {
+    from {
+        transform: scale(1);
+    }
+
+    to {
+        transform: scale(1.1);
+    }
+}
+
+/* Overlay for text readability */
+.hero-carousel::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.3);
+    z-index: 1;
+}
+
+.hero-content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    color: var(--white);
+    z-index: 10;
+    width: 80%;
+}
+
+.hero-content h1 {
+    font-size: 3.5rem;
+    margin-bottom: 1rem;
+    font-weight: 300;
+    letter-spacing: 2px;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+
+.hero-content p {
+    font-size: 1.2rem;
+    margin-bottom: 2.5rem;
+    opacity: 0.9;
+    text-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+/* Bottom Buttons */
+.hero-btns.bottom-btns {
+    position: absolute;
+    bottom: 80px;
+    /* Above scroll-down arrow */
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 15px;
+    z-index: 20;
+    width: 100%;
+    justify-content: center;
+    flex-wrap: wrap;
+    padding: 0 20px;
+}
+
+.hero-btns .btn-primary {
+    margin: 0 !important;
+    /* Reset inline styles */
+    min-width: 140px;
+    text-align: center;
+}
+
+/* Background Helpers */
+.bg-light {
+    background-color: #f8f9fa;
+}
+
+.bg-white {
+    background-color: #fff;
+}
+
+.info-section {
+    padding: 5rem 0;
+}
+
+/* Transport Section */
+.transport-section {
+    background-color: var(--white);
+    padding: 5rem 0;
+    border-top: 1px solid #eee;
+}
+
+.section-title {
+    text-align: center;
+    margin-bottom: 3rem;
+    font-size: 2rem;
+    color: var(--primary);
+}
+
+.transport-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2rem;
+}
+
+.transport-card {
+    text-align: center;
+    padding: 2rem;
+    background: #f8f9fa;
+    border-radius: var(--radius-lg);
+    transition: 0.3s;
+}
+
+.transport-card:hover {
+    background: #fff;
+    box-shadow: var(--shadow);
+    transform: translateY(-5px);
+}
+
+.transport-card i {
+    font-size: 2.5rem;
+    color: var(--accent);
+    margin-bottom: 1rem;
+}
+
+.transport-card h3 {
+    margin-bottom: 1rem;
+    color: var(--primary);
+}
+
+.transport-card p {
+    color: var(--text-light);
+    margin-bottom: 1.5rem;
+}
+
+.transport-card small {
+    display: block;
+    color: #888;
+    background: #fff;
+    padding: 5px 10px;
+    border-radius: 50px;
+    border: 1px solid #eee;
+    width: fit-content;
+    margin: 0 auto;
+}
+
+.btn-primary {
+    display: inline-block;
+    padding: 1rem 2.5rem;
+    /* Titanium Alloy Gradient */
+    background: linear-gradient(135deg, #e0e0e0 0%, #bfbfbf 50%, #e0e0e0 100%);
+    color: #333;
+    text-decoration: none;
+    border-radius: 50px;
+    font-weight: 600;
+    border: 1px solid #a0a0a0;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.5);
+    transition: all 0.3s ease;
+    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.4);
+}
+
+.btn-primary:hover {
+    transform: translateY(-3px);
+    background: linear-gradient(135deg, #f2f2f2 0%, #d6d6d6 50%, #f2f2f2 100%);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+    color: #000;
+    border-color: #bbbbbb;
+}
+
+.scroll-down {
+    position: absolute;
+    bottom: 30px;
+    animation: bounce 2s infinite;
+    opacity: 0.7;
+}
+
+@keyframes bounce {
+
+    0%,
+    20%,
+    50%,
+    80%,
+    100% {
+        transform: translateY(0);
+    }
+
+    40% {
+        transform: translateY(-10px);
+    }
+
+    60% {
+        transform: translateY(-5px);
+    }
+}
+
+/* Filters */
+.filters {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin: 3rem 0;
+}
+
+.filter-btn {
+    border: none;
+    background: none;
+    padding: 0.5rem 1.5rem;
+    font-size: 1rem;
+    color: var(--text-light);
+    cursor: pointer;
+    border-radius: 50px;
+    transition: 0.3s;
+}
+
+.filter-btn.active,
+.filter-btn:hover {
+    background-color: var(--primary);
+    color: var(--white);
+}
+
+/* Grid System */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px 5rem;
+}
+
+.operators-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 2.5rem;
+}
+
+/* Hotel Card */
+.card {
+    background: var(--white);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    transition: transform 0.3s ease;
+    display: flex;
+    flex-direction: column;
+}
+
+.card:hover {
+    transform: translateY(-10px);
+}
+
+/* Carousel Styles */
+.card-carousel {
+    height: 250px;
+    position: relative;
+    overflow: hidden;
+}
+
+.carousel-track {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    transition: transform 0.4s ease-in-out;
+}
+
+.carousel-slide {
+    min-width: 100%;
+    height: 100%;
+}
+
+.carousel-slide img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.carousel-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(0, 0, 0, 0.3);
+    color: white;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+    z-index: 10;
+    transition: 0.3s;
+    opacity: 0;
+}
+
+.card:hover .carousel-btn {
+    opacity: 1;
+}
+
+.carousel-btn:hover {
+    background: rgba(0, 0, 0, 0.7);
+}
+
+.prev-btn {
+    left: 0;
+    border-radius: 0 5px 5px 0;
+}
+
+.next-btn {
+    right: 0;
+    border-radius: 5px 0 0 5px;
+}
+
+.carousel-dots {
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 5px;
+    z-index: 10;
+}
+
+.dot {
+    width: 8px;
+    height: 8px;
+    background: rgba(255, 255, 255, 0.5);
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.dot.active {
+    background: white;
+}
+
+.card-content {
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+
+.tags {
+    margin-bottom: 0.5rem;
+}
+
+.tag {
+    font-size: 0.75rem;
+    background-color: #E8F5E9;
+    color: var(--primary);
+    padding: 0.2rem 0.6rem;
+    border-radius: 4px;
+    margin-right: 5px;
+}
+
+.card h2 {
+    font-size: 1.4rem;
+    margin-bottom: 0.5rem;
+    color: var(--primary);
+}
+
+.location {
+    font-size: 0.9rem;
+    color: var(--text-light);
+    margin-bottom: 1rem;
+}
+
+.card p {
+    font-size: 0.95rem;
+    color: var(--text-light);
+    margin-bottom: 1.5rem;
+    flex-grow: 1;
+}
+
+.card-footer {
+    border-top: 1px solid #eee;
+    padding-top: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.price {
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.book-btn {
+    text-decoration: none;
+    color: var(--primary);
+    font-weight: 700;
+    border: 2px solid var(--primary);
+    padding: 0.4rem 1rem;
+    border-radius: 8px;
+    transition: 0.3s;
+}
+
+.book-btn:hover {
+    background-color: var(--primary);
+    color: var(--white);
+}
+
+/* Loading */
+.loading {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 3rem;
+    font-size: 1.2rem;
+    color: var(--text-light);
+}
+
+/* Sticky Theme Nav */
+.theme-nav {
+    position: -webkit-sticky;
+    /* Safari */
+    position: sticky;
+    top: 70px;
+    /* Below Top Navbar if height ~70px. Top navbar is absolute 0, so actually 0 might overlap or we need background. Wait, Top Navbar is 1.5rem + content. */
+    /* Wait, original Navbar is absolute. So it overlays content. If we scroll down, original navbar scrolls away? No, it's absolute top 0. It scrolls away with body. */
+    /* So sticky nav should stick to top: 0. */
+    top: 0;
+    z-index: 999;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    padding: 1rem 0;
+}
+
+.theme-nav-inner {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    padding-bottom: 0 !important;
+    /* Override container padding */
+    margin-bottom: 0 !important;
+}
+
+.theme-nav .nav-item {
+    text-decoration: none;
+    color: var(--text-light);
+    font-weight: 500;
+    padding: 0.5rem 1rem;
+    border-radius: 50px;
+    transition: 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.theme-nav .nav-item:hover,
+.theme-nav .nav-item.active {
+    background-color: var(--primary);
+    color: var(--white);
+}
+
+.theme-nav .nav-item i {
+    font-size: 1rem;
+}
+
+
+/* Responsive Design (RWD) */
+@media (max-width: 768px) {
+
+    /* Navbar */
+    .navbar {
+        flex-direction: column;
+        gap: 15px;
+        padding: 1rem;
+        background: rgba(0, 0, 0, 0.6);
+        /* Make it readable */
+    }
+
+    .nav-links {
+        display: flex;
+        gap: 15px;
+        align-items: center;
+    }
+
+    .nav-links a {
+        margin-left: 0;
+        font-size: 0.9rem;
+    }
+
+    /* Hero */
+    .hero-content {
+        width: 90%;
+    }
+
+    .hero-content h1 {
+        font-size: 2rem;
+    }
+
+    .hero-content p {
+        font-size: 1rem;
+    }
+
+    /* Sticky Nav */
+    .theme-nav {
+        top: 0;
+    }
+
+    .theme-nav-inner {
+        justify-content: flex-start;
+        overflow-x: auto;
+        padding: 0 20px !important;
+        white-space: nowrap;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        /* Hide scrollbar */
+    }
+
+    .theme-nav-inner::-webkit-scrollbar {
+        display: none;
+    }
+
+    .theme-nav .nav-item {
+        font-size: 0.9rem;
+        padding: 0.4rem 0.8rem;
+        flex-shrink: 0;
+    }
+
+    /* Filters */
+    .filters {
+        flex-wrap: wrap;
+    }
+
+    /* Cards */
+    .operators-grid,
+    .transport-grid {
+        grid-template-columns: 1fr;
+        /* Stack cards */
+    }
+}
+
+/* Admin Styles (shared for now or we will separate) */
+.admin-container {
+    margin-top: 100px;
+}
+
+/* Transport Button */
+.btn-transport {
+    display: inline-block;
+    margin-top: 15px;
+    padding: 8px 20px;
+    background-color: transparent;
+    border: 1px solid var(--primary);
+    color: var(--primary);
+    border-radius: 50px;
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+}
+
+.btn-transport:hover {
+    background-color: var(--primary);
+    color: #fff;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
