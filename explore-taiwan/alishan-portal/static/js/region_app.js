@@ -20,13 +20,72 @@ document.addEventListener('DOMContentLoaded', () => {
 
 let glData = [];
 
+// --- Helper for Static vs Server ---
+async function fetchSmart(endpoint, region) {
+    const IS_STATIC_HOST = window.location.hostname.includes('github.io') || window.location.protocol === 'file:';
+
+    if (IS_STATIC_HOST) {
+        // Map endpoint to file
+        // endpoints: /api/attractions -> attractions.json
+        // /api/settings -> ../data/portal_config.json (Wait, settings is portal_config?)
+        // In portal.html we used portal_config. region_app uses /api/settings which maps to site_config.json OR portal_config.json?
+        // server.py: /api/settings -> site_config.json (Line 187).
+        // BUT loadHero in region_app tries to get regions from /api/settings. 
+        // Logic in server.py Line 384 writes to site_config. 
+        // Wait, portal.html uses portal_config.json (regions). region_app.js uses /api/settings which reads site_config.json.
+        // And site_config.json only has hero_images. 
+        // BUT region_app.js lines 220 checks config.regions. site_config.json DOES NOT HAVE regions usually?
+        // Let's check site_config.json content again. It clearly had "hero_images".
+        // portal_config.json has "regions".
+        // region_app.js line 213 fetches /api/settings.
+        // If region_app.js expects regions, it might be looking at the WRONG API or server.py was updated?
+        // Server.py Line 186 maps /api/settings to site_config.json.
+        // Server.py Line 197 maps /api/data/ to data/ files.
+        // I suspect region_app.js intended to read portal_config.json for regions or site_config needs to be merged.
+        // Let's assume we read portal_config.json for Regions and site_config for Global Hero.
+        // For static, let's just read portal_config.json as it contains regions.
+
+        // Mappings
+        let filename = '';
+        if (endpoint.includes('attractions')) filename = 'attractions.json';
+        if (endpoint.includes('delicacies')) filename = 'delicacies.json';
+        if (endpoint.includes('operators')) filename = 'operators.json';
+        if (endpoint.includes('settings')) filename = 'portal_config.json'; // Use portal_config for regions
+
+        if (!filename) return [];
+
+        // Fetch FULL file
+        try {
+            const res = await fetch(`../../data/${filename}`);
+            if (!res.ok) return [];
+            const allData = await res.json();
+
+            // Client-side filtering if array
+            if (Array.isArray(allData) && region) {
+                return allData.filter(item => {
+                    const r = region;
+                    // Fuzzy match location or address
+                    return (item.location && item.location.includes(r)) ||
+                        (item.address && item.address.includes(r)) ||
+                        (item.category && item.category.includes(r)); // Loose filter
+                });
+            }
+            return allData;
+        } catch (e) { console.error(e); return []; }
+
+    } else {
+        // Server Mode
+        let url = endpoint;
+        if (region) url += `?region=${encodeURIComponent(region)}`;
+        const res = await fetch(url);
+        return await res.json();
+    }
+}
+
 // --- Attractions Logic ---
 async function loadAttractions(region) {
     try {
-        let url = '/api/attractions';
-        if (region) url += `?region=${encodeURIComponent(region)}`;
-        const res = await fetch(url);
-        const data = await res.json();
+        const data = await fetchSmart('/api/attractions', region);
         renderSimpleGrid(data, 'attractions-grid');
     } catch (e) {
         console.error("Failed to load attractions", e);
@@ -36,10 +95,7 @@ async function loadAttractions(region) {
 // --- Delicacies Logic ---
 async function loadDelicacies(region) {
     try {
-        let url = '/api/delicacies';
-        if (region) url += `?region=${encodeURIComponent(region)}`;
-        const res = await fetch(url);
-        const data = await res.json();
+        const data = await fetchSmart('/api/delicacies', region);
         renderSimpleGrid(data, 'delicacies-grid', true);
     } catch (e) {
         console.error("Failed to load delicacies", e);
@@ -85,10 +141,7 @@ function renderSimpleGrid(items, containerId, isDelicacy = false) {
 // --- Operators Logic ---
 async function loadOperators(region) {
     try {
-        let url = '/api/operators';
-        if (region) url += `?region=${encodeURIComponent(region)}`;
-        const res = await fetch(url);
-        const data = await res.json();
+        const data = await fetchSmart('/api/operators', region);
         glData = data;
         renderOperators(data);
         setupFilters(data);
@@ -209,47 +262,45 @@ async function loadHero(regionName) {
     try {
         let images = [];
 
-        // Load Global Config
-        const res = await fetch('/api/settings');
-        if (res.ok) {
-            const config = await res.json();
+        // Fetch Config smartly
+        // We use 'settings' as key to fetch portal_config in static map above
+        const config = await fetchSmart('/api/settings', null);
 
-            // Try to find the region group
-            // We need to search in all regions
-            let foundRegion = null;
-            if (config.regions) {
-                // Find deeply? No, usually regionName matches an item name or a big region name?
-                // Actually usually user clicks "Tainan" (City). 
-                // We don't distinctly have "Tainan" images stored unless we check the Big Region which contains Tainan.
-                // Or if we implemented recursive image inheritance.
-                // For now, let's just use the Big Region images if the name matches a Big Region,
-                // Or if the name is a sub-item, try to find parent Big Region images.
+        // Try to find the region group
+        // We need to search in all regions
+        let foundRegion = null;
+        if (config.regions) {
+            // Find deeply? No, usually regionName matches an item name or a big region name?
+            // Actually usually user clicks "Tainan" (City). 
+            // We don't distinctly have "Tainan" images stored unless we check the Big Region which contains Tainan.
+            // Or if we implemented recursive image inheritance.
+            // For now, let's just use the Big Region images if the name matches a Big Region,
+            // Or if the name is a sub-item, try to find parent Big Region images.
 
-                for (const r of config.regions) {
-                    // Check if name matches Big Region
-                    if (r.name.includes(regionName)) {
-                        foundRegion = r;
-                        break;
-                    }
-                    // Check sub items
-                    for (const g of r.groups) {
-                        for (const item of g.items) {
-                            if (item.name === regionName) {
-                                foundRegion = r; // Use parent region images
-                                break;
-                            }
+            for (const r of config.regions) {
+                // Check if name matches Big Region
+                if (r.name.includes(regionName)) {
+                    foundRegion = r;
+                    break;
+                }
+                // Check sub items
+                for (const g of r.groups) {
+                    for (const item of g.items) {
+                        if (item.name === regionName) {
+                            foundRegion = r; // Use parent region images
+                            break;
                         }
                     }
-                    if (foundRegion) break;
                 }
+                if (foundRegion) break;
             }
+        }
 
-            if (foundRegion && foundRegion.images && foundRegion.images.length > 0) {
-                images = foundRegion.images;
-            } else if (config.hero && config.hero.images) {
-                // Fallback to global hero
-                images = config.hero.images;
-            }
+        if (foundRegion && foundRegion.images && foundRegion.images.length > 0) {
+            images = foundRegion.images;
+        } else if (config.hero && config.hero.images) {
+            // Fallback to global hero
+            images = config.hero.images;
         }
 
         // Hard Fallback
