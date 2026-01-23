@@ -29,8 +29,8 @@ build/
 # Uploads (Privacy)
 # Keep the directory but ignore content if sensitive, or ignore completely
 # Usually we keep .gitkeep if we want the dir structure
-alishan-portal/static/uploads/*
-!alishan-portal/static/uploads/.gitkeep
+# alishan-portal/static/uploads/*
+# !alishan-portal/static/uploads/.gitkeep
 data/*.json
 !data/site_config.json
 !data/operators.json
