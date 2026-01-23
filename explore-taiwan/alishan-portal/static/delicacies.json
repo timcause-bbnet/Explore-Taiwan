@@ -1,0 +1,66 @@
+[
+    {
+        "id": "1",
+        "name": "奮起湖鐵路便當",
+        "description": "阿里山最經典的美食記憶。早期提供給搭火車的伐木工與旅客，以排骨、雞腿雙主菜聞名，配上在地高山蔬菜，充滿懷舊的人情味。",
+        "price": "$120 - $180",
+        "image": "https://images.unsplash.com/photo-1604152135912-04a022e23696?q=80&w=800",
+        "location": "奮起湖"
+    },
+    {
+        "id": "2",
+        "name": "阿里山高山茶 (珠露茶)",
+        "description": "產於石棹地區的茶葉，終年雲霧繚繞，茶葉厚實。茶湯呈現金黃色，口感甘醇濃郁，帶有特殊花香，是世界級的頂級茗茶。",
+        "price": "依等級而異",
+        "image": "https://images.unsplash.com/photo-1563822249548-9a72b6353cd1?q=80&w=800",
+        "location": "石棹 / 阿里山"
+    },
+    {
+        "id": "3",
+        "name": "野生愛玉",
+        "description": "阿里山是愛玉子的原產地。手工搓洗出的愛玉凍，口感軟嫩Q彈，淋上檸檬汁與糖水，酸甜清涼，是天然健康的消暑聖品。",
+        "price": "$40 - $60",
+        "image": "https://images.unsplash.com/photo-1595475207225-428b62bda831?q=80&w=800",
+        "location": "全區"
+    },
+    {
+        "id": "4",
+        "name": "現磨山葵 (Wasabi)",
+        "description": "阿里山氣候冷涼，適合種植高品質山葵。新鮮現磨的山葵泥，風味鮮甜嗆辣而不刺鼻，與生魚片或豆腐是絕配。",
+        "price": "伴手禮 $150起",
+        "image": "https://images.unsplash.com/photo-1615484477778-ca3b77940c25?q=80&w=800",
+        "location": "森林遊樂區"
+    },
+    {
+        "id": "5",
+        "name": "鄒族原木烤肉",
+        "description": "以相思木燻烤的大塊山豬肉與香腸，外皮烤得焦香酥脆，肉質紮實多汁，帶有濃郁的煙燻香氣，十足的原野風味。",
+        "price": "$100 - $200",
+        "image": "https://images.unsplash.com/photo-1529193591184-b1d58069ecdd?q=80&w=800",
+        "location": "觸口 / 樂野"
+    },
+    {
+        "id": "6",
+        "name": "阿里山精品咖啡",
+        "description": "近年在國際大賽屢獲頭獎。高海拔與日夜溫差大的環境，造就了咖啡豆豐富的酸質與花果香氣，層次感極佳。",
+        "price": "$200 / 杯",
+        "image": "https://images.unsplash.com/photo-1497935586351-b67a49e012bf?q=80&w=800",
+        "location": "樂野 / 達邦"
+    },
+    {
+        "id": "7",
+        "name": "奮起湖甜甜圈",
+        "description": "使用丹麥麵團烤製，外層金黃酥脆，內層鬆軟奶香濃郁。現烤出爐的香氣瀰漫老街，是遊客必排的熱門點心。",
+        "price": "$25 - $30",
+        "image": "https://images.unsplash.com/photo-1551024709-8f23befc6f87?q=80&w=800",
+        "location": "奮起湖"
+    },
+    {
+        "id": "8",
+        "name": "草仔粿",
+        "description": "奮起湖老街的傳統客家美食，外皮Q彈有嚼勁，內餡包入鹹香的菜脯米、香菇與肉燥，是道地的古早味小吃。",
+        "price": "$30 - $40",
+        "image": "https://images.unsplash.com/photo-1529940340007-8ef64bfc3608?q=80&w=800",
+        "location": "奮起湖"
+    }
+]

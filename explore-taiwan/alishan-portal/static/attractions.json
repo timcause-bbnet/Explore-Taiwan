@@ -1,0 +1,58 @@
+[
+    {
+        "id": "1",
+        "name": "阿里山日出 (祝山觀日平台)",
+        "description": "阿里山五奇之首。當清晨的第一道曙光從雲海中透出，金黃色的光芒灑落山巒，感動人心。祝山觀日平台與小笠原山觀景台是最佳觀賞點。",
+        "location": "森林遊樂區",
+        "image": "https://images.unsplash.com/photo-1470252649378-9c29740c9fa8?q=80&w=800"
+    },
+    {
+        "id": "2",
+        "name": "巨木群棧道",
+        "description": "全台密度最高的巨木群，漫步在兩期棧道間，仰望樹齡數千年的紅檜神木（如香林神木、28號巨木），享受高濃度的芬多精森林浴。",
+        "location": "森林遊樂區",
+        "image": "https://images.unsplash.com/photo-1448375240586-dfd8d3f5d8aa?q=80&w=800"
+    },
+    {
+        "id": "3",
+        "name": "奮起湖老街",
+        "description": "海拔1405公尺的山城，依山而建的屋舍與階梯，充滿復古風情。除了知名的鐵路便當，還能品嚐愛玉、甜甜圈等在地美食。",
+        "location": "奮起湖",
+        "image": "https://images.unsplash.com/photo-1582294109405-b9f481c4e107?q=80&w=800"
+    },
+    {
+        "id": "4",
+        "name": "姊妹潭",
+        "description": "兩座相依的高山湖泊，傳說為鄒族姊妹殉情之地。潭水清澈如鏡，倒映著周圍的檜木林，中央的相思亭是經典拍照景點。",
+        "location": "森林遊樂區",
+        "image": "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?q=80&w=800"
+    },
+    {
+        "id": "5",
+        "name": "隙頂二延平步道",
+        "description": "觀賞雲海、夕陽與茶園風光的絕佳地點。步道視野開闊，秋冬季節常見壯闊雲瀑，是攝影愛好者的必訪勝地。",
+        "location": "隙頂",
+        "image": "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?q=80&w=800"
+    },
+    {
+        "id": "6",
+        "name": "鄒族文化部落 (優遊吧斯)",
+        "description": "位於阿里山鄉樂野部落，可欣賞鄒族傳統歌舞、深入體驗原民文化、品嚐特色風味餐，並展售精品高山茶與咖啡。",
+        "location": "樂野",
+        "image": "https://images.unsplash.com/photo-1535025988352-780c85b52771?q=80&w=800"
+    },
+    {
+        "id": "7",
+        "name": "小笠原山觀景台",
+        "description": "擁有360度環景視野，不僅能看日出，更是觀賞星空、雲海與晚霞的秘境。運氣好時還能遇見國寶級動物「帝雉」。",
+        "location": "森林遊樂區",
+        "image": "https://images.unsplash.com/photo-1465433069123-ac47cd9308dc?q=80&w=800"
+    },
+    {
+        "id": "8",
+        "name": "水山巨木步道",
+        "description": "昔日的林業鐵道支線改建而成，平緩好走。終點為樹齡約2700年的水山巨木，姿態雄偉，是遠離塵囂的靜謐之地。",
+        "location": "森林遊樂區",
+        "image": "https://images.unsplash.com/photo-1511497584788-876760111969?q=80&w=800"
+    }
+]

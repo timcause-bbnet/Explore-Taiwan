@@ -439,7 +439,7 @@
         async function loadRegions() {
             try {
                 const IS_STATIC_HOST = window.location.hostname.includes('github.io') || window.location.protocol === 'file:';
-                const url = IS_STATIC_HOST ? '../../data/portal_config.json' : '/api/data/portal_config.json';
+                const url = IS_STATIC_HOST ? './portal_config.json' : '/api/data/portal_config.json';
                 const res = await fetch(url);
                 portalConfig = await res.json();
 
@@ -618,8 +618,8 @@
 
                                     if (IS_STATIC_HOST) {
                                         // Static Mode: Fetch ALL operators and filter client-side
-                                        // Path: ../../data/operators.json
-                                        const res = await fetch('../../data/operators.json');
+                                        // Path: ./operators.json (Co-located)
+                                        const res = await fetch('./operators.json');
                                         const allData = await res.json();
 
                                         // Client-side filtering

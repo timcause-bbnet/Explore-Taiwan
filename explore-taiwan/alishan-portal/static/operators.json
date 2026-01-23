@@ -1,0 +1,159 @@
+[
+  {
+    "id": "1",
+    "name": "阿里山神木賓館",
+    "category": "飯店",
+    "location": "森林遊樂區",
+    "address": "嘉義縣阿里山鄉中正村50號",
+    "tel": "05-2679511",
+    "link": "https://d2c.hotelplatform.com.tw/book_step1.aspx?HCode=H4CT2005&AgCode=H4Ag141",
+    "description": "位於阿里山森林遊樂區內，是旅館區第一間飯店，距離車站步行僅5分鐘。強調溫馨、安全與舒適，提供暖氣設備與免費早餐。在地經營30年，是觀賞日出與櫻花的絕佳住宿。",
+    "tags": [
+      "暖氣",
+      "近車站",
+      "免費早餐",
+      "老字號"
+    ],
+    "images": [
+      "uploads/1766719211_2315.jpg",
+      "uploads/1766719211_6756.jpg",
+      "uploads/1766719211_1902.jpg",
+      "uploads/1766719211_3564.jpg"
+    ],
+    "image": "uploads/1766719211_2315.jpg"
+  },
+  {
+    "id": "2",
+    "name": "青山別館",
+    "description": "座落於阿里山遊樂園園區內 青山別館，相鄰阿里山火車站之需步行五分鐘，提供23間舒適客房，停車場，館內宛如美術館，可欣賞老闆油畫，品嚐香濃阿里山咖啡及阿里山茶 「 櫻花季 」飯店擁有全台灣稀有櫻花總類眾多。 ",
+    "location": "森林遊樂區",
+    "address": "嘉義縣阿里山鄉中正村42號",
+    "category": "飯店",
+    "tel": "05-2679533",
+    "link": "https://www.bbnet.com.tw/chinshanvilla/reserve/",
+    "tags": [
+      "藝術與茶",
+      "賞櫻",
+      "附停車場",
+      "近車站"
+    ],
+    "images": [
+      "uploads/1766721595_5215.jpg",
+      "uploads/1766721595_2999.jpg",
+      "uploads/1766721595_5306.jpg"
+    ],
+    "image": "uploads/1766721595_5215.jpg"
+  },
+  {
+    "id": "3",
+    "name": "阿里山大峯山莊",
+    "category": "飯店",
+    "location": "森林遊樂區",
+    "address": "嘉義縣阿里山鄉中正村46號",
+    "tel": "05-2679769",
+    "link": "https://www.bbnet.com.tw/dafenghotel/reserve/?lang=tw&c=index",
+    "description": "經過全新裝修，呈現溫暖的原木風格設計。設有完善的無障礙設施與電梯，貼心照顧長輩與行動不便的旅客。客房乾淨新穎，提供高品質的休憩體驗。",
+    "tags": [
+      "全新裝修",
+      "無障礙設施",
+      "原木風格",
+      "電梯"
+    ],
+    "images": [
+      "uploads/1766721817_6050.jpg",
+      "uploads/1766721817_1880.jpg",
+      "uploads/1766721817_8383.jpg",
+      "uploads/1766721894_9001.jpg",
+      "uploads/1766721894_4418.jpg",
+      "uploads/1766721894_1167.jpg"
+    ],
+    "image": "uploads/1766721817_6050.jpg"
+  },
+  {
+    "id": "4",
+    "name": "阿里山文山賓館",
+    "category": "飯店",
+    "location": "森林遊樂區",
+    "address": "嘉義縣阿里山鄉中正村40號",
+    "tel": "05-2679712",
+    "link": "https://www.bbnet.com.tw/wunsun/reserve/",
+    "description": "位於阿里山商店街與餐廳區旁，生活機能極為便利。擁有極佳的景觀視野，部分房型可直接欣賞雲海與晚霞。提供舒適的住宿空間與熱情的服務，並可協助代訂日出專車。",
+    "tags": [
+      "日出專車",
+      "商店街旁",
+      "景觀佳"
+    ],
+    "images": [
+      "uploads/1766722758_3402.jpg",
+      "uploads/1766722758_7392.jpg",
+      "uploads/1766722758_3665.jpg"
+    ],
+    "image": "uploads/1766722758_3402.jpg"
+  },
+  {
+    "id": "5",
+    "name": "阿里山高峰大飯店",
+    "category": "飯店",
+    "location": "森林遊樂區",
+    "address": "嘉義縣阿里山鄉中正村東阿里山41號",
+    "tel": "05-2679411",
+    "link": "https://www.bbnet.com.tw/alishan/reserve/",
+    "description": "擁有獨特的戶外景觀電梯，讓您在搭乘時也能將阿里山美景盡收眼底。歐式風格外觀典雅氣派，客房設有暖氣設備，四季皆宜。頂樓設有觀景區，是欣賞雲海與夕陽的絕佳地點。",
+    "tags": [
+      "景觀電梯",
+      "雲海視野",
+      "歐式風格",
+      "暖氣"
+    ],
+    "images": [
+      "uploads/1766722674_3744.jpg",
+      "uploads/1766722674_8226.jpg",
+      "uploads/1766722674_3587.jpg"
+    ],
+    "image": "uploads/1766722674_3744.jpg"
+  },
+  {
+    "id": "6",
+    "name": "阿里山登山別館",
+    "category": "飯店",
+    "location": "森林遊樂區",
+    "address": "嘉義縣阿里山鄉中正村東阿里山47號",
+    "tel": "05-2679758",
+    "link": "https://www.bbnet.com.tw/dengshan/reserve/",
+    "description": "價格平實親民，是背包客與學生族群的最愛。鄰近阿里山火車站與步道入口，交通便利。提供電暖爐設備，冬天也不怕冷。櫃台提供詳盡的旅遊行程諮詢，助您輕鬆暢遊阿里山。",
+    "tags": [
+      "平價實惠",
+      "電暖爐",
+      "近鐵道",
+      "行程諮詢"
+    ],
+    "images": [
+      "uploads/1766722722_4035.jpg",
+      "uploads/1766722722_5469.jpg",
+      "uploads/1766722722_6303.jpg"
+    ],
+    "image": "uploads/1766722722_4035.jpg"
+  },
+  {
+    "id": "7",
+    "name": "阿里山櫻山大飯店",
+    "category": "飯店",
+    "location": "森林遊樂區",
+    "address": "嘉義縣阿里山鄉中正村39號",
+    "tel": "05-2679803",
+    "link": "https://www.bbnet.com.tw/ying-shan/reserve/",
+    "description": "位置絕佳，緊鄰商店街與停車場，出入方便。近期完成全面翻新，客房寬敞舒適，選用高品質床墊確保您的睡眠品質。是全家出遊、團體住宿的高CP值選擇。",
+    "tags": [
+      "位置絕佳",
+      "全新整修",
+      "好睡床墊",
+      "附停車場"
+    ],
+    "images": [
+      "uploads/1766722804_7144.png",
+      "uploads/1766722804_4151.jpg",
+      "uploads/1766722804_3320.jpg"
+    ],
+    "image": "uploads/1766722804_7144.png"
+  }
+]

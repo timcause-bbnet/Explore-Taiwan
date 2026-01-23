@@ -56,7 +56,7 @@ async function fetchSmart(endpoint, region) {
 
         // Fetch FULL file
         try {
-            const res = await fetch(`../../data/${filename}`);
+            const res = await fetch(`./${filename}`);
             if (!res.ok) return [];
             const allData = await res.json();
 
