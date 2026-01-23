@@ -34,50 +34,90 @@ class AppState {
         this.clockRecords = {}; // New: Store clock records
         this.applications = []; // New: Store applications [{id, userId, type, date, data, status, timestamp}]
 
-        this.loadFromServer();
+        // --- Persistence Strategy: Firebase Realtime Database ---
+        // User Config from FIREBASE_SETUP
+
+        // constructor() { // This constructor was duplicated in the original, removing the first one.
+        // this.currentUser = null;
+        // this.currentDate = new Date();
+        // this.selectedDate = new Date();
+        // this.isBatchMode = false;
+        // this.multiSelectedDates = new Set();
+        // this.isAdminMode = false;
+        // this.adminTargetUserId = null;
+
+        // Init with defaults
+        // this.users = DEFAULT_USERS;
+        // this.attendanceData = {};
+        // this.companyEvents = {};
+        // this.clockRecords = {}; 
+        // this.applications = []; 
+
+        this.initFirebase();
     }
 
-    async loadFromServer() {
-        try {
-            const res = await fetch('/api/data/office-pulse-data.json');
-            if (res.ok) {
-                const data = await res.json();
-                if (data.users && data.users.length > 0) {
-                    this.users = data.users;
-                    // Migrate Permissions
-                    // Migrate Permissions
-                    this.users.forEach(u => {
-                        if (!u.permissions) {
-                            u.permissions = { approve: false, schedule: false, manageUser: false };
-                        }
-                        // Default admin logic (Always Force for Brian)
-                        if (u.id === 'u6' || u.username === 'Brian') {
-                            u.permissions = { ...u.permissions, approve: true, schedule: true, manageUser: true, superAdmin: true };
-                        }
-                    });
-                }
+    initFirebase() {
+        // 1. Config
+        const firebaseConfig = {
+            apiKey: "AIzaSyCOfrlTr77A7Z_UEbHs8lpUYzmi5WtI7Ps",
+            authDomain: "office-pulse-171e8.firebaseapp.com",
+            databaseURL: "https://office-pulse-171e8-default-rtdb.firebaseio.com",
+            projectId: "office-pulse-171e8",
+            storageBucket: "office-pulse-171e8.firebasestorage.app",
+            messagingSenderId: "179101803060",
+            appId: "1:179101803060:web:d145631b2c458fce386061",
+            measurementId: "G-Q1EGG9K6VS"
+        };
+
+        // 2. Initialize
+        if (typeof firebase !== 'undefined' && !firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        } else if (typeof firebase === 'undefined') {
+            console.error("Firebase SDK not loaded!");
+            return;
+        }
+
+        // 3. Setup Listener (Realtime)
+        const dbRef = firebase.database().ref('/');
+
+        dbRef.on('value', (snapshot) => {
+            const data = snapshot.val();
+            if (data) {
+                console.log("🔥 Firebase Data Updated", data);
+                if (data.users) this.users = data.users;
                 if (data.attendance) this.attendanceData = data.attendance;
                 if (data.events) this.companyEvents = data.events;
                 if (data.clock) this.clockRecords = data.clock || {};
                 if (data.applications) this.applications = data.applications || [];
 
-                if (Object.keys(data).length === 0 && localStorage.getItem('officePulse_users_v4')) {
-                    console.log("Migrating local data to server...");
-                    this.users = JSON.parse(localStorage.getItem('officePulse_users_v4'));
-                    this.attendanceData = JSON.parse(localStorage.getItem('officePulse_attendance_v4'));
-                    this.companyEvents = JSON.parse(localStorage.getItem('officePulse_events_v1')) || {};
-                    // Clock records might not exist in local, that's fine
-                    this.syncToServer();
+                // Ensure Admin
+                this.users.forEach(u => {
+                    if (u.username === 'Brian') u.permissions = { approve: true, schedule: true, manageUser: true, superAdmin: true };
+                });
+
+                // Refresh UI if logged in
+                if (this.currentUser) {
+                    // Update current user ref just in case perms changed
+                    const freshUser = this.users.find(u => u.id === this.currentUser.id);
+                    if (freshUser) this.currentUser = freshUser;
+
+                    if (typeof updateSidebar === 'function') updateSidebar();
+                    if (typeof renderCalendar === 'function') renderCalendar();
+                } else {
+                    // Try auto-login if users loaded for the first time
+                    this.checkPersistentLogin();
                 }
+            } else {
+                // First time load (Empty DB)?
+                console.log("⚠️ Firebase is empty. uploading defaults...");
+                this.syncToServer();
+                // Also check persistent login here just in case local defaults connect
+                this.checkPersistentLogin();
             }
-        } catch (e) { console.error("Server load failed", e); }
-        // Force refresh logic if needed
-        if (this.currentUser) {
-            this.currentUser = this.users.find(u => u.id === this.currentUser.id);
-            document.getElementById('today-btn').click();
-        }
+        });
     }
 
+    // Replace Save Method
     async syncToServer() {
         const payload = {
             users: this.users,
@@ -87,14 +127,18 @@ class AppState {
             applications: this.applications
         };
         try {
-            await fetch('/api/data/office-pulse-data.json', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
-            });
-        } catch (e) { console.error("Sync failed", e); }
+            await firebase.database().ref('/').set(payload);
+            console.log("✅ Saved to Firebase");
+        } catch (e) {
+            console.error("Sync failed", e);
+            alert("連線儲存失敗，請檢查網路或是 Firebase 權限設定");
+        }
     }
 
+    // Legacy method stubs
+    async loadFromServer() { /* Auto-handled by on('value') listener */ }
+
+    // Clock Ops
     // Clock Ops
     getClockRecord(date, userId) {
         const key = this.formatDate(date);
@@ -102,32 +146,43 @@ class AppState {
         return this.clockRecords[key][userId];
     }
 
-    toggleClock() {
-        if (!this.currentUser) return;
+    // Explicit Clock In
+    clockIn(date, userId) {
+        const key = this.formatDate(date);
         const now = new Date();
         const timeStr = now.toLocaleTimeString('zh-TW', { hour12: false, hour: '2-digit', minute: '2-digit' });
-        const key = this.formatDate(now);
-        const userId = this.currentUser.id; // Always clock for self
 
         if (!this.clockRecords[key]) this.clockRecords[key] = {};
         if (!this.clockRecords[key][userId]) {
-            // Clock In
             this.clockRecords[key][userId] = { in: timeStr, out: null };
-            // Auto add Office status if empty? Maybe let user decide.
-        } else {
-            // Already clocked in
-            const rec = this.clockRecords[key][userId];
-            if (!rec.out) {
-                // Clock Out
-                rec.out = timeStr;
-            } else {
-                // Already out, maybe reset? or no-op
-                alert('今日已完成上下班打卡！');
-                return;
-            }
         }
         this.syncToServer();
+        return timeStr;
     }
+
+    // Explicit Clock Out
+    clockOut(date, userId) {
+        const key = this.formatDate(date);
+        const now = new Date();
+        const timeStr = now.toLocaleTimeString('zh-TW', { hour12: false, hour: '2-digit', minute: '2-digit' });
+
+        if (this.clockRecords[key] && this.clockRecords[key][userId]) {
+            this.clockRecords[key][userId].out = timeStr;
+            this.syncToServer();
+            return timeStr;
+        }
+        return null;
+    }
+
+    toggleClock() {
+        // Deprecated but kept for compatibility if needed
+        if (!this.currentUser) return;
+        const key = this.formatDate(new Date());
+        const rec = this.clockRecords[key]?.[this.currentUser.id];
+        if (!rec || !rec.in) this.clockIn(new Date(), this.currentUser.id);
+        else if (!rec.out) this.clockOut(new Date(), this.currentUser.id);
+    }
+
 
     generateMockData() {
         return {};
@@ -142,17 +197,62 @@ class AppState {
 
 
     // Auth & Basic
+    // Auth & Basic
     login(username, password) {
         const user = this.users.find(u => u.username.toLowerCase() === username.trim().toLowerCase());
         // Verify Password
         if (user && user.password === password) {
-            this.currentUser = user;
-            this.adminTargetUserId = user.id;
+            this.loginSuccess(user);
             return true;
         }
         return false;
     }
-    logout() { this.currentUser = null; this.isAdminMode = false; }
+
+    loginSuccess(user) {
+        this.currentUser = user;
+        this.adminTargetUserId = user.id;
+
+        // Persistent Login: Save ID
+        localStorage.setItem('op_current_user_id', user.id);
+
+        // Ensure Admin Perms
+        if (user.username === 'Brian') {
+            user.permissions = { approve: true, schedule: true, manageUser: true, superAdmin: true };
+        }
+    }
+
+    logout() {
+        this.currentUser = null;
+        this.isAdminMode = false;
+        localStorage.removeItem('op_current_user_id');
+        location.reload(); // Force reload to clear state
+    }
+
+    // Check local storage for persistent login
+    checkPersistentLogin() {
+        const savedId = localStorage.getItem('op_current_user_id');
+        if (savedId && this.users.length > 0) {
+            const user = this.users.find(u => u.id === savedId);
+            if (user) {
+                console.log("🔄 Auto-login restored for:", user.username);
+                this.loginSuccess(user);
+
+                // Switch Screens
+                const loginScreen = document.getElementById('login-screen');
+                const dashboardScreen = document.getElementById('dashboard-screen');
+
+                if (loginScreen) loginScreen.classList.remove('active');
+                if (dashboardScreen) dashboardScreen.classList.add('active');
+
+                // Initialize UI
+                if (typeof updateUI === 'function') updateUI();
+                else {
+                    if (typeof updateSidebar === 'function') updateSidebar();
+                    if (typeof renderCalendar === 'function') renderCalendar();
+                }
+            }
+        }
+    }
 
     // Data Ops
     getSegments(date, userId) {
@@ -464,6 +564,30 @@ document.addEventListener('DOMContentLoaded', () => {
             avatarEl.style.background = user.avatarColor;
             avatarEl.textContent = getInitials(user);
         }
+
+        // [Fix] Populate Admin Target User Select
+        const amSelect = document.getElementById('target-user-select');
+        if (amSelect) {
+            // Keep existing selection if any
+            const currentVal = amSelect.value;
+            amSelect.innerHTML = ''; // Clear to rebuild (in case users changed)
+
+            // Add Self first? Or just list all.
+            appState.users.forEach(u => {
+                const op = document.createElement('option');
+                op.value = u.id;
+                op.textContent = u.chiname || u.name;
+                amSelect.appendChild(op);
+            });
+
+            // Restore selection or default to current user
+            if (currentVal && Array.from(amSelect.options).some(o => o.value === currentVal)) {
+                amSelect.value = currentVal;
+            } else {
+                amSelect.value = appState.currentUser.id;
+            }
+        }
+
         if (DOM.sidebar.btns[0]) DOM.sidebar.btns[0].click();
         renderCalendar();
         updateSidebar();
@@ -603,69 +727,69 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function updateSidebar(typeArg) {
-        // Handle type arg from click
-        if (typeArg) {
-            DOM.newFormState.type = typeArg;
-            document.querySelectorAll('.status-btn').forEach(btn => {
-                if (btn.dataset.status === typeArg || btn.dataset.type === typeArg) btn.classList.add('active');
-                else btn.classList.remove('active');
-            });
-            DOM.newFormState.detail = '';
-            renderSubOptions(typeArg);
+        // 1. Resolve Effective Type
+        let effectiveType = typeArg;
+        if (!effectiveType) {
+            effectiveType = (DOM.newFormState && DOM.newFormState.type) ? DOM.newFormState.type : 'office';
         }
 
-        const currentType = DOM.newFormState ? DOM.newFormState.type : 'office';
-
-        // Meeting Input Visibility
+        // 2. Meeting Input Visibility (Priority Update)
+        // STRICTLY control display based on effectiveType. 
         const meetContainer = document.getElementById('meeting-inputs-container');
         if (meetContainer) {
-            meetContainer.style.display = (currentType === 'other') ? 'flex' : 'none';
-            // Populate Attendees if showing
-            if (currentType === 'other') {
+            if (effectiveType === 'other') {
+                meetContainer.style.display = 'flex';
+
+                // Populate Attendees if empty
                 const list = document.getElementById('meet-attendees-list');
                 const checkAll = document.getElementById('meet-check-all');
-
-                // Always clear and repopulate to ensure list is fresh, UNLESS we want to save state?
-                // But updateSidebar is called when clicking date. Status resets.
-                // If I clicked "Meeting" then changed Date, status might persist but list might need refresh if users changed? (Unlikely).
-                // Issue: User says they didn't see the list. Maybe "meeting-inputs-container" logic failed or currentType check failed.
-                // Or maybe the list WAS generated but hidden?
-                // Let's force generation if empty.
-                // Also double check id 'meet-attendees-list' exists.
                 if (list && list.children.length === 0) {
-                    // Sort users by department or name for better UX?
-                    // Let's just dump them.
                     const sortedUsers = [...appState.users].sort((a, b) => (a.department || '').localeCompare(b.department || ''));
-
                     sortedUsers.forEach(u => {
                         if (u.id === appState.currentUser.id) return;
                         const div = document.createElement('div');
-                        // Style specifically to be visible and clear
-                        div.style.width = "48%"; // 2 cols
+                        div.style.width = "48%";
                         div.className = 'check-group-item';
                         div.style.marginBottom = '5px';
-                        // Add explicit styling to label and input
                         div.innerHTML = `<label style="cursor:pointer; display:flex; align-items:center; gap:5px; font-size: 14px; color: #334155;"><input type="checkbox" value="${u.id}" class="meet-attendee-check" style="width:16px; height:16px;"> ${u.chiname || u.name}</label>`;
                         list.appendChild(div);
                     });
-
                     if (checkAll) {
-                        // cloneNode to remove old listeners to be safe? Or just re-add (might stack listeners if not careful)
-                        // Better: check if listener attached. Hard.
-                        // Simple: set onclick property instead of addEventListener
                         checkAll.onclick = (e) => {
                             const checks = list.querySelectorAll('.meet-attendee-check');
                             checks.forEach(c => c.checked = e.target.checked);
                         };
                     }
                 }
+            } else {
+                meetContainer.style.display = 'none';
             }
         }
 
-        if (DOM.sidebar.locationInput) {
-            DOM.sidebar.locationInput.style.display = (currentType === 'trip') ? 'flex' : 'none';
+        // 3. Handle State Updates and Other UI
+        if (typeArg) {
+            DOM.newFormState.type = typeArg;
+            document.querySelectorAll('.status-btn').forEach(btn => {
+                const btnStatus = btn.dataset.status || btn.dataset.type;
+                if (btnStatus === typeArg) btn.classList.add('active');
+                else btn.classList.remove('active');
+            });
+            DOM.newFormState.detail = '';
+            // Safe call to sub-options
+            try {
+                if (typeof renderSubOptions === 'function') renderSubOptions(typeArg);
+            } catch (e) { console.error('Error rendering sub options', e); }
+        } else {
+            // Sync UI Active Class
+            const current = DOM.newFormState.type;
+            document.querySelectorAll('.status-btn').forEach(btn => {
+                const btnStatus = btn.dataset.status || btn.dataset.type;
+                if (btnStatus === current) btn.classList.add('active');
+                else btn.classList.remove('active');
+            });
         }
 
+        // 4. Batch Mode / Standard UI
         if (appState.isBatchMode) {
             const titleText = `已選取 ${appState.multiSelectedDates.size} 天`;
             DOM.sidebar.headerH3.innerHTML = `我的狀態：<span class="highlight-text">${titleText}</span>`;
@@ -700,7 +824,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     btn.innerHTML = '<i class="fa-solid fa-stopwatch"></i> 上班';
                     btn.className = 'btn-primary';
                     btn.disabled = false;
-                    btn.onclick = () => { appState.toggleClock(); updateSidebar(); };
+                    // btn.onclick removed to prevent bypass
                 } else if (!rec.out) {
                     statusText.textContent = "工作中";
                     timeDisplay.textContent = `上班: ${rec.in}`;
@@ -708,7 +832,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     btn.className = 'btn-text-danger';
                     btn.style.border = '1px solid #ef4444';
                     btn.disabled = false;
-                    btn.onclick = () => { if (confirm('確定要下班打卡嗎？')) { appState.toggleClock(); updateSidebar(); } };
+                    // btn.onclick removed to prevent bypass
                 } else {
                     statusText.textContent = "今日已結束";
                     timeDisplay.textContent = `${rec.in} - ${rec.out}`;
@@ -949,6 +1073,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
         Object.keys(counts).forEach(key => { if (DOM.sidebar.counts[key]) DOM.sidebar.counts[key].textContent = counts[key]; });
     }
+
+    // [Fix] Ensure updateSidebar is exposed globally for inline onclick handlers
+    window.updateSidebar = updateSidebar;
+
+    // Safety: Attach listeners again in case DOM was ready earlier
+    setTimeout(() => {
+        document.querySelectorAll('.status-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const type = btn.dataset.status || btn.dataset.type;
+                if (type) updateSidebar(type);
+            });
+        });
+    }, 500);
 
     // --- Detailed Stats Logic ---
     function renderStats() {
@@ -1940,95 +2077,204 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- Clock In Logic with Geolocation ---
-    const btnClockAction = document.getElementById('btn-clock-action');
-    if (btnClockAction) {
+    // --- Clock In Logic with Geolocation (Visual Map) ---
+    const rawBtnClock = document.getElementById('btn-clock-action');
+    if (rawBtnClock) {
+        // [Security Fix] Remove any duplicate/legacy listeners by recreating the element
+        const btnClockAction = rawBtnClock.cloneNode(true);
+        rawBtnClock.parentNode.replaceChild(btnClockAction, rawBtnClock);
+
         btnClockAction.addEventListener('click', () => {
-            // 1. Check Geolocation
+            // [Feature] Desktop / Laptop Direct Clock-In Bypassing Map
+            // Logic: If screen width > 768px (Non-mobile), skip map.
+            const isDesktop = window.innerWidth > 768;
+
+            // Determine intention (In or Out?) - Always use NOW
+            const nowTime = new Date();
+            const todayStr = appState.formatDate(nowTime);
+            let rec = appState.clockRecords[todayStr]?.[appState.currentUser.id];
+
+            // If checking intentionally, determine logic state
+            const isClockingOut = (rec && rec.in && !rec.out);
+            const isFinished = (rec && rec.out);
+
+            if (isFinished) {
+                alert("今日已完成上下班打卡！");
+                return;
+            }
+
+            if (isDesktop) {
+                // Direct Clock In for Desktop
+                if (!isClockingOut) {
+                    // Clock IN
+                    const timeStr = appState.clockIn(nowTime, appState.currentUser.id);
+                    appState.addSegment(nowTime, {
+                        type: 'office',
+                        start: timeStr,
+                        end: '18:00',
+                        isAllDay: false,
+                        note: `打卡: 電腦版 (${timeStr})`
+                    });
+
+                    document.getElementById('clock-status-text').textContent = "上班中";
+                    document.getElementById('clock-status-text').style.color = "#059669";
+                    document.getElementById('clock-time-display').textContent = timeStr;
+                    btnClockAction.innerHTML = '<i class="fa-solid fa-right-from-bracket"></i> 下班';
+                    btnClockAction.style.background = '#64748b';
+                    alert(`電腦版打卡成功！時間: ${timeStr}`);
+                } else {
+                    // Clock OUT
+                    const timeStr = appState.clockOut(nowTime, appState.currentUser.id);
+                    document.getElementById('clock-status-text').textContent = "已下班";
+                    document.getElementById('clock-status-text').style.color = "#64748b";
+                    document.getElementById('clock-time-display').textContent = `${rec.in} - ${timeStr}`; // Update to range
+                    btnClockAction.innerHTML = '<i class="fa-solid fa-check"></i> 完成';
+                    btnClockAction.disabled = true;
+                    btnClockAction.className = 'btn-secondary';
+                    btnClockAction.style.background = '';
+                    alert(`下班打卡成功！時間: ${timeStr}`);
+                }
+
+                renderCalendar();
+                updateSidebar();
+                return;
+            }
+
+            // --- Mobile Flow (Map Required) ---
+
+            // 1. Check Geolocation Support
             if (!navigator.geolocation) { alert('您的裝置不支援地理位置功能，無法使用打卡功能。'); return; }
 
-            const oldText = btnClockAction.innerHTML;
-            btnClockAction.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> 定位中...';
-            btnClockAction.disabled = true;
+
+            // Open Map Modal
+            const mapModal = document.getElementById('map-modal');
+            const mapFrame = document.getElementById('map-frame');
+            const statusText = document.getElementById('map-status-text');
+            const confirmBtn = document.getElementById('btn-confirm-clock');
+
+            mapModal.classList.add('active');
+            statusText.textContent = '🚀 正在獲取您的位置...';
+            statusText.style.color = '#334155';
+            confirmBtn.disabled = true;
+            confirmBtn.style.opacity = '0.5';
+            confirmBtn.onclick = null; // Reset previous listeners
+            mapFrame.src = 'about:blank'; // Reset frame
 
             navigator.geolocation.getCurrentPosition(
                 (position) => {
                     const userLat = position.coords.latitude;
                     const userLng = position.coords.longitude;
 
+                    // Show Map (OpenStreetMap)
+                    mapFrame.src = `https://www.openstreetmap.org/export/embed.html?bbox=${userLng - 0.005},${userLat - 0.005},${userLng + 0.005},${userLat + 0.005}&layer=mapnik&marker=${userLat},${userLng}`;
+
                     // 2. Check Distances
-                    let allowed = false;
                     let matchedLoc = null;
+                    let minDistance = 999999;
 
                     const u = appState.currentUser;
                     const locs = u.locations || [];
-
-                    // Get valid target locations
                     const targetLocs = locs.filter(l => l.lat && l.lng);
 
                     if (targetLocs.length === 0) {
-                        alert('您尚未設定打卡地點，請先至「設定 -> 編輯個人資料」新增地點。');
-                        btnClockAction.innerHTML = oldText; btnClockAction.disabled = false;
+                        statusText.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i> 您尚未設定打卡地點！<br><span style="font-size:0.8rem">請至設定頁面新增地點</span>';
+                        statusText.style.color = '#aa4a44';
                         return;
                     }
 
-                    // Distance Calculation (Haversine)
+                    // Haversine Calc
                     const getDistance = (lat1, lon1, lat2, lon2) => {
-                        const R = 6371e3; // metres
+                        const R = 6371e3;
                         const φ1 = lat1 * Math.PI / 180;
                         const φ2 = lat2 * Math.PI / 180;
                         const Δφ = (lat2 - lat1) * Math.PI / 180;
                         const Δλ = (lon2 - lon1) * Math.PI / 180;
-
-                        const a = Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
-                            Math.cos(φ1) * Math.cos(φ2) *
-                            Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
+                        const a = Math.sin(Δφ / 2) * Math.sin(Δφ / 2) + Math.cos(φ1) * Math.cos(φ2) * Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
                         const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
                         return R * c;
                     };
 
-                    for (const loc of targetLocs) {
+                    targetLocs.forEach(loc => {
                         const dist = getDistance(userLat, userLng, loc.lat, loc.lng);
-                        if (dist <= 150) { // 150 meters
-                            allowed = true;
-                            matchedLoc = loc;
-                            break;
-                        }
-                    }
+                        if (dist < minDistance) minDistance = dist;
+                        if (dist <= 150) matchedLoc = loc;
+                    });
 
-                    btnClockAction.innerHTML = oldText; btnClockAction.disabled = false;
+                    if (matchedLoc) {
+                        statusText.innerHTML = `<i class="fa-solid fa-circle-check"></i> 確認位置：${matchedLoc.label}<br><span style="font-size:0.8rem; color:#059669;">距離 ${Math.round(minDistance)} 公尺 (符合)</span>`;
+                        statusText.style.color = '#059669';
 
-                    if (allowed) {
-                        // 3. Success -> Clock In
-                        const now = new Date();
-                        const timeStr = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+                        // Enable Confirm Button
+                        confirmBtn.disabled = false;
+                        confirmBtn.style.opacity = '1';
 
-                        const seg = {
-                            type: 'office',
-                            detail: matchedLoc.label || 'Office',
-                            note: `打卡 (${timeStr}) - ${matchedLoc.addr || ''}`,
-                            isAllDay: false,
-                            start: timeStr,
-                            end: '18:00',
-                            id: Date.now() + Math.random()
+                        // Update button text contextually
+                        confirmBtn.textContent = isClockingOut ? "📍 確認下班" : "📍 確認上班";
+
+                        // Bind Confirm Action
+                        confirmBtn.onclick = function () {
+                            // Re-evaluate state just in case, but local scope is safe enough
+                            if (!isClockingOut) {
+                                // CLOCK IN
+                                const tStr = appState.clockIn(nowTime, appState.currentUser.id);
+                                appState.addSegment(nowTime, {
+                                    type: 'office',
+                                    start: tStr,
+                                    end: '18:00',
+                                    isAllDay: false,
+                                    note: `打卡: ${matchedLoc.label}`
+                                });
+
+                                alert(`打卡成功！\n地點: ${matchedLoc.label}\n時間: ${tStr}`);
+
+                                // UI Updates Logic (Sync with Desktop flow)
+                                document.getElementById('clock-status-text').textContent = "上班中";
+                                document.getElementById('clock-status-text').style.color = "#059669";
+                                document.getElementById('clock-time-display').textContent = tStr;
+                                btnClockAction.innerHTML = '<i class="fa-solid fa-right-from-bracket"></i> 下班';
+                                btnClockAction.style.background = '#64748b';
+
+                            } else {
+                                // CLOCK OUT
+                                const tStr = appState.clockOut(nowTime, appState.currentUser.id);
+
+                                alert(`下班打卡成功！\n時間: ${tStr}`);
+
+                                document.getElementById('clock-status-text').textContent = "已下班";
+                                document.getElementById('clock-status-text').style.color = "#64748b";
+                                document.getElementById('clock-time-display').textContent = `${rec.in} - ${tStr}`;
+                                btnClockAction.innerHTML = '<i class="fa-solid fa-check"></i> 完成';
+                                btnClockAction.disabled = true;
+                                btnClockAction.className = 'btn-secondary';
+                                btnClockAction.style.background = '';
+                                btnClockAction.style.border = 'none';
+                            }
+
+                            mapModal.classList.remove('active');
+                            renderCalendar();
+                            updateSidebar();
                         };
 
-                        appState.addSegment(now, seg);
-                        alert(`打卡成功！\n地點: ${matchedLoc.label}\n時間: ${timeStr}`);
-                        renderCalendar(); updateSidebar();
                     } else {
-                        alert(`打卡失敗：您不在任何打卡地點的 150 公尺範圍內。\n目前位置: ${userLat.toFixed(5)}, ${userLng.toFixed(5)}`);
+                        statusText.innerHTML = `<i class="fa-solid fa-circle-xmark"></i> 位置不符！<br><span style="font-size:0.8rem">最近打卡點距離 ${Math.round(minDistance)} 公尺 (需 < 150)</span>`;
+                        statusText.style.color = '#dc2626';
+
+                        // Disable Confirm Button explicitly
+                        confirmBtn.disabled = true;
+                        confirmBtn.style.opacity = '0.5';
+                        confirmBtn.onclick = null; // Prevent accidental clicks
                     }
                 },
-                (err) => {
-                    console.error(err);
-                    alert('無法取得定位，請確認已授權瀏覽器及此網站存取位置。\n錯誤代碼: ' + err.code);
-                    btnClockAction.innerHTML = oldText; btnClockAction.disabled = false;
+                (error) => {
+                    statusText.textContent = '❌ 無法獲取位置：' + error.message;
+                    statusText.style.color = '#dc2626';
+                    console.error(error);
                 },
                 { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
             );
         });
     }
+
 
     if (DOM.calendar.batchBtn) DOM.calendar.batchBtn.addEventListener('click', () => {
         appState.isBatchMode = !appState.isBatchMode;
@@ -2849,6 +3095,31 @@ document.addEventListener('DOMContentLoaded', () => {
         const m = String(date.getMonth() + 1).padStart(2, '0');
         input.value = `${y}-${m}`;
     };
+
+    // --- Login Logic (Restored) ---
+    if (DOM.loginForm) {
+        DOM.loginForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const username = DOM.usernameInput.value;
+            const password = DOM.loginPasswordInput.value;
+
+            if (appState.login(username, password)) {
+                switchScreen('dashboard');
+                renderDashboard();
+            } else {
+                alert('登入失敗，請檢查帳號密碼 (預設: Alex / 123)');
+                DOM.loginForm.classList.add('shake');
+                setTimeout(() => DOM.loginForm.classList.remove('shake'), 500);
+            }
+        });
+    }
+
+    // Logout Logic
+    if (DOM.userDisplay.logoutBtn) {
+        DOM.userDisplay.logoutBtn.addEventListener('click', () => {
+            appState.logout();
+        });
+    }
 
     // Perpetual Calendar Listeners
     if (DOM.calendar.yearSelect) {

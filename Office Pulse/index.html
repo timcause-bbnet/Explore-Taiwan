@@ -8,11 +8,99 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="css/batch_style.css">
-    <link rel="stylesheet" href="css/settings_style.css">
-    <link rel="stylesheet" href="css/responsive.css">
+    <link rel="stylesheet" href="./css/style.css?v=fix1">
+    <link rel="stylesheet" href="./css/batch_style.css?v=fix1">
+    <link rel="stylesheet" href="./css/settings_style.css?v=fix1">
+    <link rel="stylesheet" href="./css/responsive.css?v=fix1">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Firebase SDKs (Compat version for easiest integration without Node.js) -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-analytics-compat.js"></script>
+
+    <style>
+        /* Mobile Specific Overrides in HTML to ensure highest priority */
+        @media (max-width: 768px) {
+
+            /* --- Mobile Scroll Fix (Aggressive) --- */
+            html,
+            body {
+                height: 100%;
+                overflow: hidden;
+                /* App container handles scroll */
+            }
+
+            #app {
+                height: 100%;
+                overflow-y: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            .dashboard-grid {
+                display: block !important;
+                /* Stack normally */
+                height: auto !important;
+                max-height: none !important;
+                overflow: visible !important;
+                padding-bottom: 80px;
+                /* Big padding for bottom scroll */
+            }
+
+            /* Disable internal scrolling for Calendar on mobile -> Let it expand */
+            .calendar-days {
+                overflow: visible !important;
+                height: auto !important;
+                flex: none !important;
+                display: grid !important;
+                /* Keep grid layout */
+            }
+
+            .calendar-section {
+                height: auto !important;
+                max-height: none !important;
+                overflow: visible !important;
+                margin-bottom: 20px;
+            }
+
+            .sidebar-section {
+                height: auto !important;
+                max-height: none !important;
+                overflow: visible !important;
+                margin-top: 20px;
+            }
+
+            #login-screen {
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                z-index: 9999;
+                display: flex !important;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                background: #f8fafc;
+            }
+
+            #login-screen:not(.active) {
+                display: none !important;
+            }
+
+            /* Ensure Dashboard is HIDDEN on load */
+            #dashboard-screen:not(.active) {
+                display: none !important;
+            }
+
+            .login-panel {
+                background: white;
+                box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+                border-radius: 16px;
+                width: 90%;
+            }
+        }
+    </style>
 </head>
 
 <body>
@@ -288,6 +376,33 @@
                         </div>
                     </aside>
             </main>
+        </div>
+
+        <!-- Map Modal -->
+        <div id="map-modal" class="modal-overlay">
+            <div class="modal-panel" style="max-width: 500px; height: 60vh; padding: 0;">
+                <div class="modal-header"
+                    style="padding: 1rem; border-bottom: 1px solid #e2e8f0; justify-content: space-between; display: flex;">
+                    <h3 style="margin:0; font-size: 1.1rem;"><i class="fa-solid fa-location-dot"
+                            style="color:#ef4444;"></i> 打卡位置驗證</h3>
+                    <button onclick="document.getElementById('map-modal').classList.remove('active')"
+                        style="border:none; background:none; font-size:1.2rem; cursor:pointer;"><i
+                            class="fa-solid fa-xmark"></i></button>
+                </div>
+                <div style="flex: 1; position: relative;">
+                    <iframe id="map-frame" width="100%" height="100%" style="border:0;" loading="lazy"
+                        allowfullscreen></iframe>
+
+                    <!-- Status Overlay -->
+                    <div id="map-status-overlay"
+                        style="position: absolute; bottom: 20px; left: 10px; right: 10px; background: white; padding: 10px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); text-align: center;">
+                        <p id="map-status-text" style="margin: 0 0 10px; font-weight: bold; color: #334155;">正在定位...</p>
+                        <button id="btn-confirm-clock" disabled class="btn-primary" style="width: 100%; opacity: 0.5;">
+                            確認打卡
+                        </button>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <!-- Stats Modal -->
@@ -937,7 +1052,7 @@
             </div>
         </div>
 
-        <script src="js/app.js?v=47"></script>
+        <script src="./js/app.js?v=fix_mobile_clock_v2"></script>
 </body>
 
 </html>

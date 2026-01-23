@@ -1,0 +1,41 @@
+name: Deploy to Production
+
+on:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      - name: Install Dependencies
+        run: |
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+          # Or package.json if you had node steps
+          # npm install
+
+      # Example: Deploy via SSH (Requires Secrets: HOST, USERNAME, SSH_KEY)
+      # This is a standard pattern for VPS deployment
+      # - name: Deploy via SSH
+      #   uses: appleboy/ssh-action@master
+      #   with:
+      #     host: ${{ secrets.HOST }}
+      #     username: ${{ secrets.USERNAME }}
+      #     key: ${{ secrets.SSH_KEY }}
+      #     port: 22
+      #     script: |
+      #       cd /path/to/project
+      #       git pull origin main
+      #       # Restart service if needed
+      #       # systemctl restart my-service
+
+      - name: Deployment Placeholder
+        run: echo "Code is ready to be deployed. Configure the SSH steps above with your secrets to finish the pipeline."

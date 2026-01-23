@@ -1,0 +1,21 @@
+{
+    "name": "alishan-portal-project",
+    "version": "1.0.0",
+    "description": "Taiwan Exploration Portal with PMS Backend",
+    "main": "server.py",
+    "scripts": {
+        "start": "python server.py 8082",
+        "dev": "python server.py 8082",
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "keywords": [
+        "taiwan",
+        "travel",
+        "portal",
+        "admin"
+    ],
+    "author": "",
+    "license": "ISC",
+    "dependencies": {},
+    "devDependencies": {}
+}

@@ -57,6 +57,22 @@ class PortalHandler(http.server.SimpleHTTPRequestHandler):
                 self.wfile.write(b'{}')
             return
 
+        # Route: /api/data/portal_config.json
+        if self.path == '/api/data/portal_config.json':
+            self.send_response(200)
+            self.send_header('Content-Type', 'application/json; charset=utf-8')
+            self.end_headers()
+            CONFIG_FILE = os.path.join(DATA_DIR, 'portal_config.json')
+            if os.path.exists(CONFIG_FILE):
+                try:
+                    with open(CONFIG_FILE, 'rb') as f:
+                        self.wfile.write(f.read())
+                except Exception:
+                    self.wfile.write(b'{}')
+            else:
+                self.wfile.write(b'{}')
+            return
+
         # Serve static files
         # Default to index.html if path is root
         if self.path == '/':
