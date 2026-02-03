@@ -1,0 +1,46 @@
+# System Files
+.DS_Store
+Thumbs.db
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Runtime functionality
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Dependency directories
+node_modules/
+jspm_packages/
+venv/
+.env
+.venv
+
+# Build
+dist/
+build/
+
+# Uploads (Privacy)
+# Keep the directory but ignore content if sensitive, or ignore completely
+# Usually we keep .gitkeep if we want the dir structure
+# alishan-portal/static/uploads/*
+# !alishan-portal/static/uploads/.gitkeep
+data/*.json
+!data/site_config.json
+!data/operators.json
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Project specific
+__pycache__/
+*.pyc
